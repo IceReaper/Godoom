@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://btagk0wabd5q8"]
+
+[ext_resource type="Script" path="res://Godoom/GodotMain.cs" id="1_p58m1"]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_p58m1")

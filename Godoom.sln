@@ -1,0 +1,28 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Godoom", "Godoom.csproj", "{824A74EC-AB63-440A-ABD1-663A6186EC18}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repo", ".repo", "{5F5DB10D-CE02-47C0-8393-FDCDD848748D}"
+	ProjectSection(SolutionItems) = preProject
+		project.godot = project.godot
+		Main.tscn = Main.tscn
+		.gitignore = .gitignore
+		README.MD = README.MD
+		LICENSE.MD = LICENSE.MD
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{824A74EC-AB63-440A-ABD1-663A6186EC18}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal

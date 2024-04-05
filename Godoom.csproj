@@ -1,0 +1,16 @@
+<Project Sdk="Godot.NET.Sdk/4.2.1">
+
+	<PropertyGroup>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+		<RootNamespace/>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MeltySynth" Version="2.4.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="ManagedDoom\.editorconfig" />
+	</ItemGroup>
+
+</Project>

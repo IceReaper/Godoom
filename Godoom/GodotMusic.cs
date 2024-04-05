@@ -1,0 +1,64 @@
+﻿using Godoom.Music;
+using ManagedDoom;
+using ManagedDoom.Audio;
+using System.Globalization;
+using Node = Godot.Node;
+using StreamAudioStreamPlayer = Godoom.Nodes.StreamAudioStreamPlayer;
+
+namespace Godoom;
+
+public sealed class GodotMusic : IMusic, IDisposable
+{
+	private readonly Config _config;
+	private readonly Wad _wad;
+
+	private readonly MusReader _reader;
+	private readonly StreamAudioStreamPlayer _audioPlayer;
+
+	private Bgm _current;
+
+	public int MaxVolume => 15;
+
+	public int Volume
+	{
+		get => _config.audio_musicvolume;
+		set => _config.audio_musicvolume = value;
+	}
+
+	public GodotMusic(Config config, GameContent content, Node node, string sfPath)
+	{
+		_config = config;
+		_wad = content.Wad;
+
+		_reader = new MusReader(this, config, sfPath);
+
+		_audioPlayer = new StreamAudioStreamPlayer { MixRate = MusDecoder.SampleRate, FillBuffer = _reader.GetData };
+		node.AddChild(_audioPlayer);
+
+		_current = Bgm.NONE;
+	}
+
+	public void StartMusic(Bgm bgm, bool loop)
+	{
+		if (bgm == _current)
+			return;
+
+		var data = _wad.ReadLump($"D_{DoomInfo.BgmNames[(int)bgm].ToString().ToUpper(CultureInfo.InvariantCulture)}");
+		var decoder = ReadData(data, loop);
+
+		_reader.SetDecoder(decoder);
+
+		_current = bgm;
+	}
+
+	private static IDecoder? ReadData(byte[] data, bool loop)
+	{
+		return MusDecoder.IsMus(data) ? new MusDecoder(data, loop) :
+			MidiDecoder.IsMidi(data) ? new MidiDecoder(data, loop) : null;
+	}
+
+	public void Dispose()
+	{
+		_audioPlayer.Dispose();
+	}
+}
