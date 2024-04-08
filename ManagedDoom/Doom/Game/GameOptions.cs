@@ -10,6 +10,7 @@
 using ManagedDoom.Audio;
 using ManagedDoom.Doom.Common;
 using ManagedDoom.Doom.Intermission;
+using ManagedDoom.Platform;
 using ManagedDoom.UserInput;
 using ManagedDoom.Video;
 
@@ -74,11 +75,6 @@ public sealed class GameOptions
 		intermissionInfo = new IntermissionInfo();
 
 		random = new DoomRandom();
-
-		video = NullVideo.GetInstance();
-		sound = NullSound.GetInstance();
-		music = NullMusic.GetInstance();
-		userInput = NullUserInput.GetInstance();
 	}
 
 	public GameOptions(CommandLineArgs args, GameContent content) : this()

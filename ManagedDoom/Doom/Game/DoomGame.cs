@@ -7,6 +7,8 @@
  * information, see COPYING.
  */
 
+using ManagedDoom.Doom.Event;
+using ManagedDoom.Doom.Info;
 using ManagedDoom.Doom.Intermission;
 
 namespace ManagedDoom.Doom.Game;
@@ -288,7 +290,7 @@ public sealed class DoomGame
 
 		options.Sound.Reset();
 
-		world = new World(content, options, this);
+		world = new World.World(content, options, this);
 
 		options.UserInput.Reset();
 	}
@@ -457,7 +459,7 @@ public sealed class DoomGame
 		}
 
 		gameState = GameState.Intermission;
-		intermission = new Intermission(options, imInfo);
+		intermission = new Intermission.Intermission(options, imInfo);
 	}
 
 	private void DoWorldDone()
@@ -484,11 +486,11 @@ public sealed class DoomGame
 
 	public void InitNew(GameSkill skill, int episode, int map)
 	{
-		options.Skill = (GameSkill)Math.Clamp((int)skill, (int)GameSkill.Baby, (int)GameSkill.Nightmare);
+		options.Skill = (GameSkill)System.Math.Clamp((int)skill, (int)GameSkill.Baby, (int)GameSkill.Nightmare);
 
 		if (options.GameMode == GameMode.Retail)
 		{
-			options.Episode = Math.Clamp(episode, 1, 4);
+			options.Episode = System.Math.Clamp(episode, 1, 4);
 		}
 		else if (options.GameMode == GameMode.Shareware)
 		{
@@ -496,16 +498,16 @@ public sealed class DoomGame
 		}
 		else
 		{
-			options.Episode = Math.Clamp(episode, 1, 4);
+			options.Episode = System.Math.Clamp(episode, 1, 4);
 		}
 
 		if (options.GameMode == GameMode.Commercial)
 		{
-			options.Map = Math.Clamp(map, 1, 32);
+			options.Map = System.Math.Clamp(map, 1, 32);
 		}
 		else
 		{
-			options.Map = Math.Clamp(map, 1, 9);
+			options.Map = System.Math.Clamp(map, 1, 9);
 		}
 
 		options.Random.Clear();
@@ -589,8 +591,8 @@ public sealed class DoomGame
 	public GameOptions Options => options;
 	public GameState State => gameState;
 	public int GameTic => gameTic;
-	public World World => world;
-	public Intermission Intermission => intermission;
+	public World.World World => world;
+	public Intermission.Intermission Intermission => intermission;
 	public Finale Finale => finale;
 	public bool Paused => paused;
 

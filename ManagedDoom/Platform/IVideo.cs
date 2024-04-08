@@ -9,7 +9,7 @@
 
 using ManagedDoom.Doom.Math;
 
-namespace ManagedDoom.Video;
+namespace ManagedDoom.Platform;
 
 public interface IVideo
 {

@@ -13,6 +13,7 @@ using ManagedDoom.Doom.Game;
 using ManagedDoom.Doom.Info;
 using ManagedDoom.Doom.Menu;
 using ManagedDoom.Doom.Opening;
+using ManagedDoom.Platform;
 using ManagedDoom.UserInput;
 using ManagedDoom.Video;
 
@@ -59,11 +60,6 @@ public class Doom
 	public Doom(CommandLineArgs args, Config config, GameContent content, IVideo video, ISound? sound, IMusic? music, IUserInput userInput)
 #pragma warning restore CS8669
 	{
-		video = video ?? NullVideo.GetInstance();
-		sound = sound ?? NullSound.GetInstance();
-		music = music ?? NullMusic.GetInstance();
-		userInput = userInput ?? NullUserInput.GetInstance();
-
 		this.args = args;
 		this.config = config;
 		this.content = content;

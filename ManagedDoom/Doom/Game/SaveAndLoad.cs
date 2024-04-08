@@ -323,7 +323,7 @@ public static class SaveAndLoad
 				}
 
 				{
-					var plat = thinker as Platform;
+					var plat = thinker as World.Platform;
 					if (plat != null)
 					{
 						data[ptr++] = (byte)SpecialClass.Plat;
@@ -811,7 +811,7 @@ public static class SaveAndLoad
 
 					case SpecialClass.Plat:
 						PadPointer();
-						var plat = new Platform(world);
+						var plat = new World.Platform(world);
 						plat.ThinkerState = ReadThinkerState(data, ptr + 8);
 						plat.Sector = world.Map.Sectors[BitConverter.ToInt32(data, ptr + 12)];
 						plat.Sector.SpecialData = plat;

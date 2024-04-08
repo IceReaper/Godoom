@@ -12,6 +12,7 @@ using ManagedDoom;
 using ManagedDoom.Doom.Event;
 using ManagedDoom.Doom.Game;
 using ManagedDoom.Doom.World;
+using ManagedDoom.Platform;
 using ManagedDoom.UserInput;
 
 namespace Godoom;

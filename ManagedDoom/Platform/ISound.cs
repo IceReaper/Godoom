@@ -7,9 +7,10 @@
  * information, see COPYING.
  */
 
+using ManagedDoom.Audio;
 using ManagedDoom.Doom.World;
 
-namespace ManagedDoom.Audio;
+namespace ManagedDoom.Platform;
 
 public interface ISound
 {

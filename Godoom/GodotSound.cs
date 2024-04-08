@@ -16,6 +16,7 @@ using ManagedDoom.Doom.Info;
 using ManagedDoom.Doom.Math;
 using ManagedDoom.Doom.Wad;
 using ManagedDoom.Doom.World;
+using ManagedDoom.Platform;
 using System.Globalization;
 using Node = Godot.Node;
 

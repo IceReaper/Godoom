@@ -7,17 +7,14 @@
  * information, see COPYING.
  */
 
-using ManagedDoom.Doom.Game;
+using ManagedDoom.Audio;
 
-namespace ManagedDoom.UserInput;
+namespace ManagedDoom.Platform;
 
-public interface IUserInput
+public interface IMusic
 {
-	void BuildTicCmd(TicCmd cmd);
-	void Reset();
-	void GrabMouse();
-	void ReleaseMouse();
+	void StartMusic(Bgm bgm, bool loop);
 
-	public int MaxMouseSensitivity { get; }
-	public int MouseSensitivity { get; set; }
+	public int MaxVolume { get; }
+	public int Volume { get; set; }
 }
