@@ -1,6 +1,6 @@
 # Godoom
 
-Godoom is a Godot port of [Managed Doom](https://github.com/sinshu/managed-doom) by sinshu focused on:
+Godoom is a Godot fork of [Managed Doom](https://github.com/sinshu/managed-doom) by sinshu focused on:
 1. Migration to Godot
 2. Modernizing the codebase
 3. Replacing the 2d renderer with Godot's 3d renderer
@@ -30,13 +30,13 @@ And whatever people suggest which sounds good enough to be added here :)
 
 ## License
 
-Godoom is distributed under the [GPLv2 license](LICENSE.MD).
+Godoom is distributed under the [GPLv3 license](COPYING).
 
 Godoom uses the following nuget libraries:
 * [MeltySynth](https://github.com/sinshu/meltysynth/) ([MIT license](licenses/LICENSE_MeltySynth.txt))
 
 Godoom uses the following bundled libraries:
-* [TimGM6mb](https://musescore.org/en/handbook/soundfonts-and-sfz-files) by Tim Brechbill ([GPLv2 license](licenses/LICENSE_TimGM6mb.txt))
+* [TimGM6mb](https://musescore.org/en/handbook/soundfonts-and-sfz-files) ([GPLv2 license](licenses/LICENSE_TimGM6mb.txt))
 
 ## Special Thanks
 

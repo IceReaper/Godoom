@@ -8,7 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repo", ".repo", "{5F5DB10D
 		Main.tscn = Main.tscn
 		.gitignore = .gitignore
 		README.MD = README.MD
-		LICENSE.MD = LICENSE.MD
+		COPYING = COPYING
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Global
