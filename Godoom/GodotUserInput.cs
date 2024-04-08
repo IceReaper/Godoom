@@ -22,11 +22,7 @@ public class GodotUserInput : IUserInput
 	private readonly Config _config;
 	private readonly GodotDoom _doom;
 
-	private readonly bool _useMouse;
-
 	private readonly bool[] _weaponKeys = new bool[7];
-
-	private int _turnHeld;
 
 	private bool _mouseGrabbed;
 	private float _mouseX;
@@ -40,16 +36,14 @@ public class GodotUserInput : IUserInput
 
 	public int MouseSensitivity
 	{
-		get => _config.mouse_sensitivity;
-		set => _config.mouse_sensitivity = value;
+		get => _config.MouseSensitivity;
+		set => _config.MouseSensitivity = value;
 	}
 
-	public GodotUserInput(Config config, Window window, GodotDoom doom, bool useMouse)
+	public GodotUserInput(Config config, Window window, GodotDoom doom)
 	{
 		_config = config;
 		_doom = doom;
-
-		_useMouse = useMouse;
 
 		window.WindowInput += OnInput;
 	}
@@ -68,7 +62,7 @@ public class GodotUserInput : IUserInput
 
 				break;
 
-			case InputEventMouseMotion mouseEvent when _useMouse && _mouseGrabbed:
+			case InputEventMouseMotion mouseEvent when _mouseGrabbed:
 			{
 				_mouseX += mouseEvent.Relative.X;
 				_mouseY += mouseEvent.Relative.Y;
@@ -80,16 +74,13 @@ public class GodotUserInput : IUserInput
 
 	public void BuildTicCmd(TicCmd cmd)
 	{
-		var keyForward = IsPressed(_config.key_forward);
-		var keyBackward = IsPressed(_config.key_backward);
-		var keyStrafeLeft = IsPressed(_config.key_strafeleft);
-		var keyStrafeRight = IsPressed(_config.key_straferight);
-		var keyTurnLeft = IsPressed(_config.key_turnleft);
-		var keyTurnRight = IsPressed(_config.key_turnright);
-		var keyFire = IsPressed(_config.key_fire);
-		var keyUse = IsPressed(_config.key_use);
-		var keyRun = IsPressed(_config.key_run);
-		var keyStrafe = IsPressed(_config.key_strafe);
+		var keyForward = IsPressed(_config.KeyForward);
+		var keyBackward = IsPressed(_config.KeyBackward);
+		var keyStrafeLeft = IsPressed(_config.KeyStrafeLeft);
+		var keyStrafeRight = IsPressed(_config.KeyStrafeRight);
+		var keyFire = IsPressed(_config.KeyFire);
+		var keyUse = IsPressed(_config.KeyUse);
+		var keyRun = IsPressed(_config.KeyRun);
 
 		_weaponKeys[0] = Input.IsKeyPressed(Key.Key1);
 		_weaponKeys[1] = Input.IsKeyPressed(Key.Key2);
@@ -101,30 +92,9 @@ public class GodotUserInput : IUserInput
 
 		cmd.Clear();
 
-		var speed = keyRun != _config.game_alwaysrun ? 1 : 0;
+		var speed = keyRun != _config.GameAlwaysRun ? 1 : 0;
 		var forward = 0;
 		var side = 0;
-
-		_turnHeld = keyTurnLeft || keyTurnRight ? _turnHeld + 1 : 0;
-
-		var turnSpeed = _turnHeld < PlayerBehavior.SlowTurnTics ? 2 : speed;
-
-		if (keyStrafe)
-		{
-			if (keyTurnRight)
-				side += PlayerBehavior.SideMove[speed];
-
-			if (keyTurnLeft)
-				side -= PlayerBehavior.SideMove[speed];
-		}
-		else
-		{
-			if (keyTurnRight)
-				cmd.AngleTurn -= (short)PlayerBehavior.AngleTurn[turnSpeed];
-
-			if (keyTurnLeft)
-				cmd.AngleTurn += (short)PlayerBehavior.AngleTurn[turnSpeed];
-		}
 
 		if (keyForward)
 			forward += PlayerBehavior.ForwardMove[speed];
@@ -157,15 +127,13 @@ public class GodotUserInput : IUserInput
 
 		UpdateMouse();
 
-		var mouseX = (int)MathF.Round(_config.mouse_sensitivity * -_mouseDeltaX / 2);
-		var mouseY = (int)MathF.Round(_config.mouse_sensitivity * _mouseDeltaY / 2);
+		var mouseX = (int)MathF.Round(_config.MouseSensitivity * -_mouseDeltaX / 2);
 
-		forward += mouseY;
+		// TODO use for looking up/down
+		// ReSharper disable once UnusedVariable
+		var mouseY = (int)MathF.Round(_config.MouseSensitivity * _mouseDeltaY / 2);
 
-		if (keyStrafe)
-			side += mouseX * 2;
-		else
-			cmd.AngleTurn -= (short)(mouseX * 8);
+		cmd.AngleTurn -= (short)(mouseX * 8);
 
 		cmd.ForwardMove += (sbyte)Math.Clamp(forward, -PlayerBehavior.MaxMove, PlayerBehavior.MaxMove);
 		cmd.SideMove += (sbyte)Math.Clamp(side, -PlayerBehavior.MaxMove, PlayerBehavior.MaxMove);
@@ -181,9 +149,6 @@ public class GodotUserInput : IUserInput
 
 	public void Reset()
 	{
-		if (!_useMouse)
-			return;
-
 		_mouseX = 0;
 		_mouseY = 0;
 		_mousePrevX = _mouseX;
@@ -194,7 +159,7 @@ public class GodotUserInput : IUserInput
 
 	public void GrabMouse()
 	{
-		if (!_useMouse || _mouseGrabbed)
+		if (_mouseGrabbed)
 			return;
 
 		Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -210,7 +175,7 @@ public class GodotUserInput : IUserInput
 
 	public void ReleaseMouse()
 	{
-		if (!_useMouse || !_mouseGrabbed)
+		if (!_mouseGrabbed)
 			return;
 
 		Input.MouseMode = Input.MouseModeEnum.Visible;
@@ -219,7 +184,7 @@ public class GodotUserInput : IUserInput
 
 	private void UpdateMouse()
 	{
-		if (!_useMouse || !_mouseGrabbed)
+		if (!_mouseGrabbed)
 			return;
 
 		_mousePrevX = _mouseX;
@@ -228,9 +193,6 @@ public class GodotUserInput : IUserInput
 		_mouseY = 0;
 		_mouseDeltaX = _mouseX - _mousePrevX;
 		_mouseDeltaY = _mouseY - _mousePrevY;
-
-		if (_config.mouse_disableyaxis)
-			_mouseDeltaY = 0;
 	}
 
 	private static DoomKey GodotToDoom(Key key)

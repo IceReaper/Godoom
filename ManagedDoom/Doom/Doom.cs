@@ -56,9 +56,7 @@ public class Doom
 
 	private bool mouseGrabbed;
 
-#pragma warning disable CS8669
-	public Doom(CommandLineArgs args, Config config, GameContent content, IVideo video, ISound? sound, IMusic? music, IUserInput userInput)
-#pragma warning restore CS8669
+	public Doom(CommandLineArgs args, Config config, GameContent content, IVideo video, ISound sound, IMusic music, IUserInput userInput)
 	{
 		this.args = args;
 		this.config = config;
@@ -100,74 +98,6 @@ public class Doom
 		quitMessage = null;
 
 		mouseGrabbed = false;
-
-		CheckGameArgs();
-	}
-
-	private void CheckGameArgs()
-	{
-		if (args.warp.Present)
-		{
-			nextState = DoomState.Game;
-			options.Episode = args.warp.Value.Item1;
-			options.Map = args.warp.Value.Item2;
-			game.DeferedInitNew();
-		}
-		else if (args.episode.Present)
-		{
-			nextState = DoomState.Game;
-			options.Episode = args.episode.Value;
-			options.Map = 1;
-			game.DeferedInitNew();
-		}
-
-		if (args.skill.Present)
-		{
-			options.Skill = (GameSkill)(args.skill.Value - 1);
-		}
-
-		if (args.deathmatch.Present)
-		{
-			options.Deathmatch = 1;
-		}
-
-		if (args.altdeath.Present)
-		{
-			options.Deathmatch = 2;
-		}
-
-		if (args.fast.Present)
-		{
-			options.FastMonsters = true;
-		}
-
-		if (args.respawn.Present)
-		{
-			options.RespawnMonsters = true;
-		}
-
-		if (args.nomonsters.Present)
-		{
-			options.NoMonsters = true;
-		}
-
-		if (args.loadgame.Present)
-		{
-			nextState = DoomState.Game;
-			game.LoadGame(args.loadgame.Value);
-		}
-
-		if (args.playdemo.Present)
-		{
-			nextState = DoomState.DemoPlayback;
-			demoPlayback = new DemoPlayback(args, content, options, args.playdemo.Value);
-		}
-
-		if (args.timedemo.Present)
-		{
-			nextState = DoomState.DemoPlayback;
-			demoPlayback = new DemoPlayback(args, content, options, args.timedemo.Value);
-		}
 	}
 
 	public void NewGame(GameSkill skill, int episode, int map)
@@ -444,7 +374,7 @@ public class Doom
 		{
 			mouseShouldBeGrabbed = false;
 		}
-		else if (config.video_fullscreen)
+		else if (config.VideoFullscreen)
 		{
 			mouseShouldBeGrabbed = true;
 		}

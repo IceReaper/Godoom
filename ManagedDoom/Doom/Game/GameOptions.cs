@@ -79,11 +79,6 @@ public sealed class GameOptions
 
 	public GameOptions(CommandLineArgs args, GameContent content) : this()
 	{
-		if (args.solonet.Present)
-		{
-			netGame = true;
-		}
-
 		gameVersion = content.Wad.GameVersion;
 		gameMode = content.Wad.GameMode;
 		missionPack = content.Wad.MissionPack;

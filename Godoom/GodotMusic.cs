@@ -34,8 +34,8 @@ public sealed class GodotMusic : IMusic, IDisposable
 
 	public int Volume
 	{
-		get => _config.audio_musicvolume;
-		set => _config.audio_musicvolume = value;
+		get => _config.AudioMusicVolume;
+		set => _config.AudioMusicVolume = value;
 	}
 
 	public GodotMusic(Config config, GameContent content, Node node, string sfPath)

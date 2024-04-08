@@ -62,7 +62,7 @@ public sealed class Renderer
 
 		palette = content.Palette;
 
-		if (config.video_highresolution)
+		if (config.VideoHighResolution)
 		{
 			screen = new DrawScreen(content.Wad, 640, 400);
 		}
@@ -71,11 +71,11 @@ public sealed class Renderer
 			screen = new DrawScreen(content.Wad, 320, 200);
 		}
 
-		config.video_gamescreensize = Math.Clamp(config.video_gamescreensize, 0, MaxWindowSize);
-		config.video_gammacorrection = Math.Clamp(config.video_gammacorrection, 0, MaxGammaCorrectionLevel);
+		config.VideoGameScreenSize = Math.Clamp(config.VideoGameScreenSize, 0, MaxWindowSize);
+		config.VideoGammaCorrection = Math.Clamp(config.VideoGammaCorrection, 0, MaxGammaCorrectionLevel);
 
 		menu = new MenuRenderer(content.Wad, screen);
-		threeD = new ThreeDRenderer(content, screen, config.video_gamescreensize);
+		threeD = new ThreeDRenderer(content, screen, config.VideoGameScreenSize);
 		statusBar = new StatusBarRenderer(content.Wad, screen);
 		intermission = new IntermissionRenderer(content.Wad, screen);
 		openingSequence = new OpeningSequenceRenderer(content.Wad, screen, this);
@@ -90,7 +90,7 @@ public sealed class Renderer
 		wipeHeight = screen.Height / scale;
 		wipeBuffer = new byte[screen.Data.Length];
 
-		palette.ResetColors(gammaCorrectionParameters[config.video_gammacorrection]);
+		palette.ResetColors(gammaCorrectionParameters[config.VideoGammaCorrection]);
 	}
 
 	public void RenderDoom(Doom.Doom doom, Fixed frameFrac)
@@ -162,7 +162,7 @@ public sealed class Renderer
 				}
 			}
 
-			if (config.video_displaymessage || ReferenceEquals(consolePlayer.Message, (string)DoomInfo.Strings.MSGOFF))
+			if (config.VideoDisplayMessage || ReferenceEquals(consolePlayer.Message, (string)DoomInfo.Strings.MSGOFF))
 			{
 				if (consolePlayer.MessageTime > 0)
 				{
@@ -333,7 +333,7 @@ public sealed class Renderer
 
 		set
 		{
-			config.video_gamescreensize = value;
+			config.VideoGameScreenSize = value;
 			threeD.WindowSize = value;
 		}
 	}
@@ -342,12 +342,12 @@ public sealed class Renderer
 	{
 		get
 		{
-			return config.video_displaymessage;
+			return config.VideoDisplayMessage;
 		}
 
 		set
 		{
-			config.video_displaymessage = value;
+			config.VideoDisplayMessage = value;
 		}
 	}
 
@@ -363,13 +363,13 @@ public sealed class Renderer
 	{
 		get
 		{
-			return config.video_gammacorrection;
+			return config.VideoGammaCorrection;
 		}
 
 		set
 		{
-			config.video_gammacorrection = value;
-			palette.ResetColors(gammaCorrectionParameters[config.video_gammacorrection]);
+			config.VideoGammaCorrection = value;
+			palette.ResetColors(gammaCorrectionParameters[config.VideoGammaCorrection]);
 		}
 	}
 }

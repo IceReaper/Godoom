@@ -22,11 +22,10 @@ public sealed class SaveSlots
 	{
 		slots = new string[slotCount];
 
-		var directory = ConfigUtilities.GetExeDirectory();
 		var buffer = new byte[descriptionSize];
 		for (var i = 0; i < slots.Length; i++)
 		{
-			var path = Path.Combine(directory, "doomsav" + i + ".dsg");
+			var path = Path.Combine(ConfigUtilities.DataPath, "save" + i + ".sav");
 			if (File.Exists(path))
 			{
 				using (var reader = new FileStream(path, FileMode.Open, FileAccess.Read))

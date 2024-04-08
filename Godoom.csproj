@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="ManagedDoom\.editorconfig" />
+		<Content Include="ManagedDoom\.editorconfig" />
 	</ItemGroup>
 
 </Project>

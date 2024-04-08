@@ -68,12 +68,12 @@ public sealed class GodotSound : ISound, IDisposable
 
 	public int Volume
 	{
-		get => _config.audio_soundvolume;
+		get => _config.AudioSoundVolume;
 
 		set
 		{
-			_config.audio_soundvolume = value;
-			_masterVolumeDecay = (float)_config.audio_soundvolume / MaxVolume;
+			_config.AudioSoundVolume = value;
+			_masterVolumeDecay = (float)_config.AudioSoundVolume / MaxVolume;
 		}
 	}
 
@@ -81,9 +81,9 @@ public sealed class GodotSound : ISound, IDisposable
 	{
 		_config = config;
 
-		config.audio_soundvolume = Math.Clamp(config.audio_soundvolume, 0, MaxVolume);
+		config.AudioSoundVolume = Math.Clamp(config.AudioSoundVolume, 0, MaxVolume);
 
-		if (config.audio_randompitch)
+		if (config.AudioRandomPitch)
 			_random = new DoomRandom();
 
 		for (var i = 0; i < DoomInfo.SfxNames.Length; i++)
@@ -116,7 +116,7 @@ public sealed class GodotSound : ISound, IDisposable
 		_uiChannel = new AudioStreamPlayer();
 		node.AddChild(_uiChannel);
 
-		_masterVolumeDecay = (float)config.audio_soundvolume / MaxVolume;
+		_masterVolumeDecay = (float)config.AudioSoundVolume / MaxVolume;
 	}
 
 	private static byte[] GetSamples(Wad wad, string name, out int sampleRate, out int sampleCount)

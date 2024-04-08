@@ -7,83 +7,33 @@
  * information, see COPYING.
  */
 
+using System.Globalization;
+
 namespace ManagedDoom;
 
 public static class ConfigUtilities
 {
-	private static readonly string[] iwadNames = new string[]
+	private static readonly string[] WadNames = ["DOOM2.WAD", "PLUTONIA.WAD", "TNT.WAD", "DOOM.WAD", "DOOM1.WAD", "FREEDOOM2.WAD", "FREEDOOM1.WAD"];
+
+	public static string DataPath => Directory.GetCurrentDirectory();
+	public static string ConfigPath => Path.Combine(DataPath, "config.cfg");
+
+	private static string GetDefaultWadPath()
 	{
-		"DOOM2.WAD",
-		"PLUTONIA.WAD",
-		"TNT.WAD",
-		"DOOM.WAD",
-		"DOOM1.WAD",
-		"FREEDOOM2.WAD",
-		"FREEDOOM1.WAD"
-	};
-
-	public static string GetExeDirectory()
-	{
-		return Directory.GetCurrentDirectory();
-	}
-
-	public static string GetConfigPath()
-	{
-		return Path.Combine(GetExeDirectory(), "managed-doom.cfg");
-	}
-
-	public static string GetDefaultIwadPath()
-	{
-		var exeDirectory = GetExeDirectory();
-		foreach (var name in iwadNames)
-		{
-			var path = Path.Combine(exeDirectory, name);
-			if (File.Exists(path))
-			{
-				return path;
-			}
-		}
-
-		var currentDirectory = Directory.GetCurrentDirectory();
-		foreach (var name in iwadNames)
-		{
-			var path = Path.Combine(currentDirectory, name);
-			if (File.Exists(path))
-			{
-				return path;
-			}
-		}
-
-		throw new Exception("No IWAD was found!");
+		return WadNames.FirstOrDefault(File.Exists) ?? throw new FileNotFoundException("No IWAD was found!");
 	}
 
 	public static bool IsIwad(string path)
 	{
-		var name = Path.GetFileName(path).ToUpper();
-		return iwadNames.Contains(name);
+		return WadNames.Contains(Path.GetFileName(path).ToUpper(CultureInfo.InvariantCulture));
 	}
 
 	public static string[] GetWadPaths(CommandLineArgs args)
 	{
-		var wadPaths = new List<string>();
+		var wadPaths = new List<string> { args.Wad ?? GetDefaultWadPath() };
 
-		if (args.iwad.Present)
-		{
-			wadPaths.Add(args.iwad.Value);
-		}
-		else
-		{
-			wadPaths.Add(GetDefaultIwadPath());
-		}
+		wadPaths.AddRange(args.File);
 
-		if (args.file.Present)
-		{
-			foreach (var path in args.file.Value)
-			{
-				wadPaths.Add(path);
-			}
-		}
-
-		return wadPaths.ToArray();
+		return [.. wadPaths];
 	}
 }

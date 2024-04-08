@@ -37,7 +37,6 @@ public sealed class PlayerBehavior
 	};
 
 	public static readonly int MaxMove = ForwardMove[1];
-	public static readonly int SlowTurnTics = 6;
 
 
 

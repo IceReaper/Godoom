@@ -21,8 +21,8 @@ public class GodotDoom : IDisposable
 	private readonly GameContent _content;
 
 	private readonly GodotVideo _video;
-	private readonly GodotSound? _sound;
-	private readonly GodotMusic? _music;
+	private readonly GodotSound _sound;
+	private readonly GodotMusic _music;
 
 	public Doom Doom { get; }
 
@@ -35,29 +35,25 @@ public class GodotDoom : IDisposable
 	public string QuitMessage => Doom.QuitMessage;
 	public Exception? Exception { get; private set; }
 
-	public GodotDoom(CommandLineArgs args, Window window, Node3D node)
+	public GodotDoom(CommandLineArgs args, Window window, Node node)
 	{
 		_config = GodotConfigUtilities.GetConfig();
 		_content = new GameContent(args);
 
 		_video = new GodotVideo(_config, _content, window, node);
-		_sound = !args.nosound.Present && !args.nosfx.Present ? new GodotSound(_config, _content, node) : null;
-		_music = !args.nosound.Present && !args.nomusic.Present ? GodotConfigUtilities.GetMusicInstance(_config, _content, node) : null;
-		var userInput = new GodotUserInput(_config, window, this, !args.nomouse.Present);
+		_sound = new GodotSound(_config, _content, node);
+		_music = new GodotMusic(_config, _content, node, _config.AudioSoundFont);
+		var userInput = new GodotUserInput(_config, window, this);
 
 		Doom = new Doom(args, _config, _content, _video, _sound, _music, userInput);
 
-		var fpsScale = args.timedemo.Present ? 1 : _config.video_fpsscale;
+		_config.VideoFpsScale = Math.Clamp(_config.VideoFpsScale, 1, 100);
 
-		if (!args.timedemo.Present)
-		{
-			_config.video_fpsscale = Math.Clamp(_config.video_fpsscale, 1, 100);
-			_updateDelay = 1.0 / 35;
-			_renderDelay = 1.0 / (35 * fpsScale);
-		}
+		_updateDelay = 1.0 / 35;
+		_renderDelay = 1.0 / (35 * _config.VideoFpsScale);
 
-		window.Size = new Vector2I(_config.video_screenwidth, _config.video_screenheight);
-		window.Mode = _config.video_fullscreen ? Window.ModeEnum.Fullscreen : Window.ModeEnum.Windowed;
+		window.Size = new Vector2I(_config.VideoScreenWidth, _config.VideoScreenHeight);
+		window.Mode = _config.VideoFullscreen ? Window.ModeEnum.Fullscreen : Window.ModeEnum.Windowed;
 		window.MoveToCenter();
 	}
 
@@ -97,11 +93,11 @@ public class GodotDoom : IDisposable
 	{
 		GC.SuppressFinalize(this);
 
-		_music?.Dispose();
-		_sound?.Dispose();
+		_music.Dispose();
+		_sound.Dispose();
 		_video.Dispose();
 
-		_config.Save(ConfigUtilities.GetConfigPath());
+		_config.Save(ConfigUtilities.ConfigPath);
 
 		_content.Dispose();
 	}

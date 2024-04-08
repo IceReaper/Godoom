@@ -49,11 +49,6 @@ public sealed class DemoPlayback
 		demo.Options.Sound = options.Sound;
 		demo.Options.Music = options.Music;
 
-		if (args.solonet.Present)
-		{
-			demo.Options.NetGame = true;
-		}
-
 		cmds = new TicCmd[Player.MaxPlayerCount];
 		for (var i = 0; i < Player.MaxPlayerCount; i++)
 		{

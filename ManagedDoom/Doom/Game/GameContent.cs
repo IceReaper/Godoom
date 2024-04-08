@@ -29,8 +29,6 @@ public sealed class GameContent : IDisposable
 	{
 		wad = new Wad.Wad(ConfigUtilities.GetWadPaths(args));
 
-		DeHackEd.Initialize(args, wad);
-
 		palette = new Palette(wad);
 		colorMap = new ColorMap(wad);
 		textures = new TextureLookup(wad);

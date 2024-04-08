@@ -9,7 +9,6 @@
 
 using Godot;
 using ManagedDoom;
-using ManagedDoom.Doom.Game;
 
 namespace Godoom;
 
@@ -17,18 +16,18 @@ public static class GodotConfigUtilities
 {
 	public static Config GetConfig()
 	{
-		var config = new Config(ConfigUtilities.GetConfigPath());
+		var config = new Config(ConfigUtilities.ConfigPath);
 
 		var videoMode = GetDefaultVideoMode();
 
 		if (!config.IsRestoredFromFile)
 		{
-			config.video_screenwidth = videoMode.X;
-			config.video_screenheight = videoMode.Y;
+			config.VideoScreenWidth = videoMode.X;
+			config.VideoScreenHeight = videoMode.Y;
 		}
 
-		config.video_screenwidth = Math.Clamp(config.video_screenwidth, 320, videoMode.X);
-		config.video_screenheight = Math.Clamp(config.video_screenheight, 200, videoMode.Y);
+		config.VideoScreenWidth = Math.Clamp(config.VideoScreenWidth, 320, videoMode.X);
+		config.VideoScreenHeight = Math.Clamp(config.VideoScreenHeight, 200, videoMode.Y);
 
 		return config;
 	}
@@ -56,17 +55,5 @@ public static class GodotConfigUtilities
 		}
 
 		return new Vector2I(currentWidth, currentHeight);
-	}
-
-	public static GodotMusic? GetMusicInstance(Config config, GameContent content, Node3D node)
-	{
-		var soundFontPath = Path.Combine(ConfigUtilities.GetExeDirectory(), config.audio_soundfont);
-
-		if (File.Exists(soundFontPath))
-			return new GodotMusic(config, content, node, soundFontPath);
-
-		GD.PrintErr($"SoundFont '{config.audio_soundfont}' was not found!");
-
-		return null;
 	}
 }

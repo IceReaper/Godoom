@@ -9,7 +9,7 @@
 
 namespace ManagedDoom.UserInput;
 
-public static class DoomMouseButtonEx
+public static class DoomMouseButtonExtensions
 {
 	public static string ToString(DoomMouseButton button)
 	{

@@ -33,11 +33,11 @@ public class MusReader
 		_parent = parent;
 		_config = config;
 
-		config.audio_musicvolume = Math.Clamp(config.audio_musicvolume, 0, parent.MaxVolume);
+		config.AudioMusicVolume = Math.Clamp(config.AudioMusicVolume, 0, parent.MaxVolume);
 
 		_synthesizer = new Synthesizer(
 			sfPath,
-			new SynthesizerSettings(MusDecoder.SampleRate) { BlockSize = MusDecoder.BlockLength, EnableReverbAndChorus = config.audio_musiceffect }
+			new SynthesizerSettings(MusDecoder.SampleRate) { BlockSize = MusDecoder.BlockLength, EnableReverbAndChorus = config.AudioMusicEffect }
 		);
 
 		_left = new float[BlockLength];
@@ -59,7 +59,7 @@ public class MusReader
 			_current = _reserved;
 		}
 
-		var a = 32768 * (2.0F * _config.audio_musicvolume / _parent.MaxVolume);
+		var a = 32768 * (2.0F * _config.AudioMusicVolume / _parent.MaxVolume);
 
 		_current?.RenderWaveform(_synthesizer, _left, _right);
 

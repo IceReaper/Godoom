@@ -9,7 +9,7 @@
 
 namespace ManagedDoom.UserInput;
 
-public static class DoomKeyEx
+public static class DoomKeyExtensions
 {
 	public static char GetChar(this DoomKey key)
 	{

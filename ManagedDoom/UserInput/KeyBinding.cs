@@ -36,8 +36,8 @@ public sealed class KeyBinding
 
 	public override string ToString()
 	{
-		var keyValues = _keys.Select(DoomKeyEx.ToString);
-		var mouseValues = _mouseButtons.Select(DoomMouseButtonEx.ToString);
+		var keyValues = _keys.Select(DoomKeyExtensions.ToString);
+		var mouseValues = _mouseButtons.Select(DoomMouseButtonExtensions.ToString);
 		var values = keyValues.Concat(mouseValues).ToArray();
 
 		return values.Length > 0 ? string.Join(", ", values) : "none";
@@ -55,7 +55,7 @@ public sealed class KeyBinding
 
 		foreach (var s in split)
 		{
-			var key = DoomKeyEx.Parse(s);
+			var key = DoomKeyExtensions.Parse(s);
 
 			if (key != DoomKey.Unknown)
 			{
@@ -64,7 +64,7 @@ public sealed class KeyBinding
 				continue;
 			}
 
-			var mouseButton = DoomMouseButtonEx.Parse(s);
+			var mouseButton = DoomMouseButtonExtensions.Parse(s);
 
 			if (mouseButton != DoomMouseButton.Unknown)
 				mouseButtons.Add(mouseButton);

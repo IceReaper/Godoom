@@ -306,8 +306,7 @@ public sealed class DoomGame
 	{
 		gameAction = GameAction.Nothing;
 
-		var directory = ConfigUtilities.GetExeDirectory();
-		var path = Path.Combine(directory, "doomsav" + loadGameSlotNumber + ".dsg");
+		var path = Path.Combine(ConfigUtilities.DataPath, "save" + loadGameSlotNumber + ".sav");
 		SaveAndLoad.Load(this, path);
 	}
 
@@ -315,8 +314,7 @@ public sealed class DoomGame
 	{
 		gameAction = GameAction.Nothing;
 
-		var directory = ConfigUtilities.GetExeDirectory();
-		var path = Path.Combine(directory, "doomsav" + saveGameSlotNumber + ".dsg");
+		var path = Path.Combine(ConfigUtilities.DataPath, "save" + saveGameSlotNumber + ".sav");
 		SaveAndLoad.Save(this, saveGameDescription, path);
 		world.ConsolePlayer.SendMessage(DoomInfo.Strings.GGSAVED);
 	}
