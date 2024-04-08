@@ -8,7 +8,6 @@
  */
 
 using ManagedDoom.Doom.Graphics;
-using ManagedDoom.Doom.Graphics.Dummy;
 
 namespace ManagedDoom.Doom.Game;
 
@@ -38,21 +37,6 @@ public sealed class GameContent : IDisposable
 		flats = new FlatLookup(wad);
 		sprites = new SpriteLookup(wad);
 		animation = new TextureAnimation(textures, flats);
-	}
-
-	public static GameContent CreateDummy(params string[] wadPaths)
-	{
-		var gc = new GameContent();
-
-		gc.wad = new Wad.Wad(wadPaths);
-		gc.palette = new Palette(gc.wad);
-		gc.colorMap = new ColorMap(gc.wad);
-		gc.textures = new DummyTextureLookup(gc.wad);
-		gc.flats = new DummyFlatLookup(gc.wad);
-		gc.sprites = new DummySpriteLookup(gc.wad);
-		gc.animation = new TextureAnimation(gc.textures, gc.flats);
-
-		return gc;
 	}
 
 	public void Dispose()
