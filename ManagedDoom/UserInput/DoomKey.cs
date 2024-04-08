@@ -112,6 +112,5 @@ public enum DoomKey
 	F13,
 	F14,
 	F15,
-	Pause,
-	Count
+	Pause
 }

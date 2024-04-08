@@ -16,6 +16,5 @@ public enum DoomMouseButton
 	Mouse2,
 	Mouse3,
 	Mouse4,
-	Mouse5,
-	Count
+	Mouse5
 }

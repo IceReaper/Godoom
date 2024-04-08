@@ -13,39 +13,27 @@ public static class DoomMouseButtonEx
 {
 	public static string ToString(DoomMouseButton button)
 	{
-		switch (button)
+		return button switch
 		{
-			case DoomMouseButton.Mouse1:
-				return "mouse1";
-			case DoomMouseButton.Mouse2:
-				return "mouse2";
-			case DoomMouseButton.Mouse3:
-				return "mouse3";
-			case DoomMouseButton.Mouse4:
-				return "mouse4";
-			case DoomMouseButton.Mouse5:
-				return "mouse5";
-			default:
-				return "unknown";
-		}
+			DoomMouseButton.Mouse1 => "mouse1",
+			DoomMouseButton.Mouse2 => "mouse2",
+			DoomMouseButton.Mouse3 => "mouse3",
+			DoomMouseButton.Mouse4 => "mouse4",
+			DoomMouseButton.Mouse5 => "mouse5",
+			_ => "unknown"
+		};
 	}
 
 	public static DoomMouseButton Parse(string value)
 	{
-		switch (value)
+		return value switch
 		{
-			case "mouse1":
-				return DoomMouseButton.Mouse1;
-			case "mouse2":
-				return DoomMouseButton.Mouse2;
-			case "mouse3":
-				return DoomMouseButton.Mouse3;
-			case "mouse4":
-				return DoomMouseButton.Mouse4;
-			case "mouse5":
-				return DoomMouseButton.Mouse5;
-			default:
-				return DoomMouseButton.Unknown;
-		}
+			"mouse1" => DoomMouseButton.Mouse1,
+			"mouse2" => DoomMouseButton.Mouse2,
+			"mouse3" => DoomMouseButton.Mouse3,
+			"mouse4" => DoomMouseButton.Mouse4,
+			"mouse5" => DoomMouseButton.Mouse5,
+			_ => DoomMouseButton.Unknown
+		};
 	}
 }

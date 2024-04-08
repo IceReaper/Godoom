@@ -11,74 +11,68 @@ namespace ManagedDoom.UserInput;
 
 public sealed class KeyBinding
 {
-	public static readonly KeyBinding Empty = new KeyBinding();
+	private static readonly KeyBinding Empty = new();
 
-	private DoomKey[] keys;
-	private DoomMouseButton[] mouseButtons;
+	private readonly DoomKey[] _keys;
+	private readonly DoomMouseButton[] _mouseButtons;
 
 	private KeyBinding()
 	{
-		keys = Array.Empty<DoomKey>();
-		mouseButtons = Array.Empty<DoomMouseButton>();
+		_keys = [];
+		_mouseButtons = [];
 	}
 
-	public KeyBinding(IReadOnlyList<DoomKey> keys)
+	public KeyBinding(IEnumerable<DoomKey> keys)
 	{
-		this.keys = keys.ToArray();
-		this.mouseButtons = Array.Empty<DoomMouseButton>();
+		_keys = keys.ToArray();
+		_mouseButtons = [];
 	}
 
-	public KeyBinding(IReadOnlyList<DoomKey> keys, IReadOnlyList<DoomMouseButton> mouseButtons)
+	public KeyBinding(IEnumerable<DoomKey> keys, IEnumerable<DoomMouseButton> mouseButtons)
 	{
-		this.keys = keys.ToArray();
-		this.mouseButtons = mouseButtons.ToArray();
+		_keys = keys.ToArray();
+		_mouseButtons = mouseButtons.ToArray();
 	}
 
 	public override string ToString()
 	{
-		var keyValues = keys.Select(key => DoomKeyEx.ToString(key));
-		var mouseValues = mouseButtons.Select(button => DoomMouseButtonEx.ToString(button));
+		var keyValues = _keys.Select(DoomKeyEx.ToString);
+		var mouseValues = _mouseButtons.Select(DoomMouseButtonEx.ToString);
 		var values = keyValues.Concat(mouseValues).ToArray();
-		if (values.Length > 0)
-		{
-			return string.Join(", ", values);
-		}
-		else
-		{
-			return "none";
-		}
+
+		return values.Length > 0 ? string.Join(", ", values) : "none";
 	}
 
 	public static KeyBinding Parse(string value)
 	{
 		if (value == "none")
-		{
 			return Empty;
-		}
 
 		var keys = new List<DoomKey>();
 		var mouseButtons = new List<DoomMouseButton>();
 
-		var split = value.Split(',').Select(x => x.Trim());
+		var split = value.Split(',').Select(static x => x.Trim());
+
 		foreach (var s in split)
 		{
 			var key = DoomKeyEx.Parse(s);
+
 			if (key != DoomKey.Unknown)
 			{
 				keys.Add(key);
+
 				continue;
 			}
 
 			var mouseButton = DoomMouseButtonEx.Parse(s);
+
 			if (mouseButton != DoomMouseButton.Unknown)
-			{
 				mouseButtons.Add(mouseButton);
-			}
 		}
 
 		return new KeyBinding(keys, mouseButtons);
 	}
 
-	public IReadOnlyList<DoomKey> Keys => keys;
-	public IReadOnlyList<DoomMouseButton> MouseButtons => mouseButtons;
+	public IEnumerable<DoomKey> Keys => _keys;
+	public IEnumerable<DoomMouseButton> MouseButtons => _mouseButtons;
 }
