@@ -7,46 +7,43 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Audio;
 
-namespace ManagedDoom.Audio
+public sealed class NullMusic : IMusic
 {
-	public sealed class NullMusic : IMusic
+	private static NullMusic instance;
+
+	public static NullMusic GetInstance()
 	{
-		private static NullMusic instance;
-
-		public static NullMusic GetInstance()
+		if (instance == null)
 		{
-			if (instance == null)
-			{
-				instance = new NullMusic();
-			}
-
-			return instance;
+			instance = new NullMusic();
 		}
 
-		public void StartMusic(Bgm bgm, bool loop)
+		return instance;
+	}
+
+	public void StartMusic(Bgm bgm, bool loop)
+	{
+	}
+
+	public int MaxVolume
+	{
+		get
 		{
+			return 15;
+		}
+	}
+
+	public int Volume
+	{
+		get
+		{
+			return 0;
 		}
 
-		public int MaxVolume
+		set
 		{
-			get
-			{
-				return 15;
-			}
-		}
-
-		public int Volume
-		{
-			get
-			{
-				return 0;
-			}
-
-			set
-			{
-			}
 		}
 	}
 }

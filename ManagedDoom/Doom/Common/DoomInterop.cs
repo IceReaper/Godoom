@@ -7,34 +7,31 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Common;
 
-namespace ManagedDoom
+public static class DoomInterop
 {
-	public static class DoomInterop
+	public static string ToString(byte[] data, int offset, int maxLength)
 	{
-		public static string ToString(byte[] data, int offset, int maxLength)
+		var length = 0;
+		for (var i = 0; i < maxLength; i++)
 		{
-			var length = 0;
-			for (var i = 0; i < maxLength; i++)
+			if (data[offset + i] == 0)
 			{
-				if (data[offset + i] == 0)
-				{
-					break;
-				}
-				length++;
+				break;
 			}
-			var chars = new char[length];
-			for (var i = 0; i < chars.Length; i++)
-			{
-				var c = data[offset + i];
-				if ('a' <= c && c <= 'z')
-				{
-					c -= 0x20;
-				}
-				chars[i] = (char)c;
-			}
-			return new string(chars);
+			length++;
 		}
+		var chars = new char[length];
+		for (var i = 0; i < chars.Length; i++)
+		{
+			var c = data[offset + i];
+			if ('a' <= c && c <= 'z')
+			{
+				c -= 0x20;
+			}
+			chars[i] = (char)c;
+		}
+		return new string(chars);
 	}
 }

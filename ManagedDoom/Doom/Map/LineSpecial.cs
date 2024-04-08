@@ -7,12 +7,9 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+public enum LineSpecial
 {
-	public enum LineSpecial
-	{
-		Normal = 0
-	}
+	Normal = 0
 }

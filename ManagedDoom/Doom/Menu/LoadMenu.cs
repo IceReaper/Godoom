@@ -7,120 +7,120 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+using ManagedDoom.Audio;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.UserInput;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public sealed class LoadMenu : MenuDef
 {
-	public sealed class LoadMenu : MenuDef
+	private string[] name;
+	private int[] titleX;
+	private int[] titleY;
+	private TextBoxMenuItem[] items;
+
+	private int index;
+	private TextBoxMenuItem choice;
+
+	public LoadMenu(
+		DoomMenu menu,
+		string name, int titleX, int titleY,
+		int firstChoice,
+		params TextBoxMenuItem[] items) : base(menu)
 	{
-		private string[] name;
-		private int[] titleX;
-		private int[] titleY;
-		private TextBoxMenuItem[] items;
+		this.name = new[] { name };
+		this.titleX = new[] { titleX };
+		this.titleY = new[] { titleY };
+		this.items = items;
 
-		private int index;
-		private TextBoxMenuItem choice;
+		index = firstChoice;
+		choice = items[index];
+	}
 
-		public LoadMenu(
-			DoomMenu menu,
-			string name, int titleX, int titleY,
-			int firstChoice,
-			params TextBoxMenuItem[] items) : base(menu)
+	public override void Open()
+	{
+		for (var i = 0; i < items.Length; i++)
 		{
-			this.name = new[] { name };
-			this.titleX = new[] { titleX };
-			this.titleY = new[] { titleY };
-			this.items = items;
+			items[i].SetText(Menu.SaveSlots[i]);
+		}
+	}
 
-			index = firstChoice;
-			choice = items[index];
+	private void Up()
+	{
+		index--;
+		if (index < 0)
+		{
+			index = items.Length - 1;
 		}
 
-		public override void Open()
+		choice = items[index];
+	}
+
+	private void Down()
+	{
+		index++;
+		if (index >= items.Length)
 		{
-			for (var i = 0; i < items.Length; i++)
-			{
-				items[i].SetText(Menu.SaveSlots[i]);
-			}
+			index = 0;
 		}
 
-		private void Up()
+		choice = items[index];
+	}
+
+	public override bool DoEvent(DoomEvent e)
+	{
+		if (e.Type != EventType.KeyDown)
 		{
-			index--;
-			if (index < 0)
-			{
-				index = items.Length - 1;
-			}
-
-			choice = items[index];
-		}
-
-		private void Down()
-		{
-			index++;
-			if (index >= items.Length)
-			{
-				index = 0;
-			}
-
-			choice = items[index];
-		}
-
-		public override bool DoEvent(DoomEvent e)
-		{
-			if (e.Type != EventType.KeyDown)
-			{
-				return true;
-			}
-
-			if (e.Key == DoomKey.Up)
-			{
-				Up();
-				Menu.StartSound(Sfx.PSTOP);
-			}
-
-			if (e.Key == DoomKey.Down)
-			{
-				Down();
-				Menu.StartSound(Sfx.PSTOP);
-			}
-
-			if (e.Key == DoomKey.Enter)
-			{
-				if (DoLoad(index))
-				{
-					Menu.Close();
-				}
-				Menu.StartSound(Sfx.PISTOL);
-			}
-
-			if (e.Key == DoomKey.Escape)
-			{
-				Menu.Close();
-				Menu.StartSound(Sfx.SWTCHX);
-			}
-
 			return true;
 		}
 
-		public bool DoLoad(int slotNumber)
+		if (e.Key == DoomKey.Up)
 		{
-			if (Menu.SaveSlots[slotNumber] != null)
-			{
-				Menu.Doom.LoadGame(slotNumber);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			Up();
+			Menu.StartSound(Sfx.PSTOP);
 		}
 
-		public IReadOnlyList<string> Name => name;
-		public IReadOnlyList<int> TitleX => titleX;
-		public IReadOnlyList<int> TitleY => titleY;
-		public IReadOnlyList<MenuItem> Items => items;
-		public MenuItem Choice => choice;
+		if (e.Key == DoomKey.Down)
+		{
+			Down();
+			Menu.StartSound(Sfx.PSTOP);
+		}
+
+		if (e.Key == DoomKey.Enter)
+		{
+			if (DoLoad(index))
+			{
+				Menu.Close();
+			}
+			Menu.StartSound(Sfx.PISTOL);
+		}
+
+		if (e.Key == DoomKey.Escape)
+		{
+			Menu.Close();
+			Menu.StartSound(Sfx.SWTCHX);
+		}
+
+		return true;
 	}
+
+	public bool DoLoad(int slotNumber)
+	{
+		if (Menu.SaveSlots[slotNumber] != null)
+		{
+			Menu.Doom.LoadGame(slotNumber);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public IReadOnlyList<string> Name => name;
+	public IReadOnlyList<int> TitleX => titleX;
+	public IReadOnlyList<int> TitleY => titleY;
+	public IReadOnlyList<MenuItem> Items => items;
+	public MenuItem Choice => choice;
 }

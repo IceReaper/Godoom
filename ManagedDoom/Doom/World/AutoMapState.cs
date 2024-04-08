@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum AutoMapState
 {
-	public enum AutoMapState
-	{
-		None,
-		AllMap,
-		AllThings
-	}
+	None,
+	AllMap,
+	AllThings
 }

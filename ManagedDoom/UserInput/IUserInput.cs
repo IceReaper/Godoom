@@ -7,18 +7,17 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Game;
 
-namespace ManagedDoom.UserInput
+namespace ManagedDoom.UserInput;
+
+public interface IUserInput
 {
-	public interface IUserInput
-	{
-		void BuildTicCmd(TicCmd cmd);
-		void Reset();
-		void GrabMouse();
-		void ReleaseMouse();
+	void BuildTicCmd(TicCmd cmd);
+	void Reset();
+	void GrabMouse();
+	void ReleaseMouse();
 
-		public int MaxMouseSensitivity { get; }
-		public int MouseSensitivity { get; set; }
-	}
+	public int MaxMouseSensitivity { get; }
+	public int MouseSensitivity { get; set; }
 }

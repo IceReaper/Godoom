@@ -7,128 +7,125 @@
  * information, see COPYING.
  */
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.World;
+
+public sealed class Thinkers
 {
-	public sealed class Thinkers
+	private World world;
+
+	public Thinkers(World world)
 	{
-		private World world;
+		this.world = world;
 
-		public Thinkers(World world)
+		InitThinkers();
+	}
+
+
+	private Thinker cap;
+
+	private void InitThinkers()
+	{
+		cap = new Thinker();
+		cap.Prev = cap.Next = cap;
+	}
+
+	public void Add(Thinker thinker)
+	{
+		cap.Prev.Next = thinker;
+		thinker.Next = cap;
+		thinker.Prev = cap.Prev;
+		cap.Prev = thinker;
+	}
+
+	public void Remove(Thinker thinker)
+	{
+		thinker.ThinkerState = ThinkerState.Removed;
+	}
+
+	public void Run()
+	{
+		var current = cap.Next;
+		while (current != cap)
 		{
-			this.world = world;
-
-			InitThinkers();
-		}
-
-
-		private Thinker cap;
-
-		private void InitThinkers()
-		{
-			cap = new Thinker();
-			cap.Prev = cap.Next = cap;
-		}
-
-		public void Add(Thinker thinker)
-		{
-			cap.Prev.Next = thinker;
-			thinker.Next = cap;
-			thinker.Prev = cap.Prev;
-			cap.Prev = thinker;
-		}
-
-		public void Remove(Thinker thinker)
-		{
-			thinker.ThinkerState = ThinkerState.Removed;
-		}
-
-		public void Run()
-		{
-			var current = cap.Next;
-			while (current != cap)
+			if (current.ThinkerState == ThinkerState.Removed)
 			{
-				if (current.ThinkerState == ThinkerState.Removed)
-				{
-					// Time to remove it.
-					current.Next.Prev = current.Prev;
-					current.Prev.Next = current.Next;
-				}
-				else
-				{
-					if (current.ThinkerState == ThinkerState.Active)
-					{
-						current.Run();
-					}
-				}
-				current = current.Next;
+				// Time to remove it.
+				current.Next.Prev = current.Prev;
+				current.Prev.Next = current.Next;
 			}
+			else
+			{
+				if (current.ThinkerState == ThinkerState.Active)
+				{
+					current.Run();
+				}
+			}
+			current = current.Next;
+		}
+	}
+
+	public void UpdateFrameInterpolationInfo()
+	{
+		var current = cap.Next;
+		while (current != cap)
+		{
+			current.UpdateFrameInterpolationInfo();
+			current = current.Next;
+		}
+	}
+
+	public void Reset()
+	{
+		cap.Prev = cap.Next = cap;
+	}
+
+	public ThinkerEnumerator GetEnumerator()
+	{
+		return new ThinkerEnumerator(this);
+	}
+
+
+
+	public struct ThinkerEnumerator : IEnumerator<Thinker>
+	{
+		private Thinkers thinkers;
+		private Thinker current;
+
+		public ThinkerEnumerator(Thinkers thinkers)
+		{
+			this.thinkers = thinkers;
+			current = thinkers.cap;
 		}
 
-		public void UpdateFrameInterpolationInfo()
+		public bool MoveNext()
 		{
-			var current = cap.Next;
-			while (current != cap)
+			while (true)
 			{
-				current.UpdateFrameInterpolationInfo();
 				current = current.Next;
+				if (current == thinkers.cap)
+				{
+					return false;
+				}
+				else if (current.ThinkerState != ThinkerState.Removed)
+				{
+					return true;
+				}
 			}
 		}
 
 		public void Reset()
 		{
-			cap.Prev = cap.Next = cap;
+			current = thinkers.cap;
 		}
 
-		public ThinkerEnumerator GetEnumerator()
+		public void Dispose()
 		{
-			return new ThinkerEnumerator(this);
 		}
 
+		public Thinker Current => current;
 
-
-		public struct ThinkerEnumerator : IEnumerator<Thinker>
-		{
-			private Thinkers thinkers;
-			private Thinker current;
-
-			public ThinkerEnumerator(Thinkers thinkers)
-			{
-				this.thinkers = thinkers;
-				current = thinkers.cap;
-			}
-
-			public bool MoveNext()
-			{
-				while (true)
-				{
-					current = current.Next;
-					if (current == thinkers.cap)
-					{
-						return false;
-					}
-					else if (current.ThinkerState != ThinkerState.Removed)
-					{
-						return true;
-					}
-				}
-			}
-
-			public void Reset()
-			{
-				current = thinkers.cap;
-			}
-
-			public void Dispose()
-			{
-			}
-
-			public Thinker Current => current;
-
-			object IEnumerator.Current => throw new NotImplementedException();
-		}
+		object IEnumerator.Current => throw new NotImplementedException();
 	}
 }

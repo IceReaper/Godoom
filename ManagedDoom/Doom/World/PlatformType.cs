@@ -7,16 +7,13 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum PlatformType
 {
-	public enum PlatformType
-	{
-		PerpetualRaise,
-		DownWaitUpStay,
-		RaiseAndChange,
-		RaiseToNearestAndChange,
-		BlazeDwus
-	}
+	PerpetualRaise,
+	DownWaitUpStay,
+	RaiseAndChange,
+	RaiseToNearestAndChange,
+	BlazeDwus
 }

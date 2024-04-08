@@ -7,25 +7,22 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Graphics;
 
-namespace ManagedDoom
+public sealed class SpriteFrame
 {
-	public sealed class SpriteFrame
+	private bool rotate;
+	private Patch[] patches;
+	private bool[] flip;
+
+	public SpriteFrame(bool rotate, Patch[] patches, bool[] flip)
 	{
-		private bool rotate;
-		private Patch[] patches;
-		private bool[] flip;
-
-		public SpriteFrame(bool rotate, Patch[] patches, bool[] flip)
-		{
-			this.rotate = rotate;
-			this.patches = patches;
-			this.flip = flip;
-		}
-
-		public bool Rotate => rotate;
-		public Patch[] Patches => patches;
-		public bool[] Flip => flip;
+		this.rotate = rotate;
+		this.patches = patches;
+		this.flip = flip;
 	}
+
+	public bool Rotate => rotate;
+	public Patch[] Patches => patches;
+	public bool[] Flip => flip;
 }

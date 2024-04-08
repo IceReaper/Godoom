@@ -9,6 +9,9 @@
 
 using Godot;
 using ManagedDoom;
+using ManagedDoom.Doom;
+using ManagedDoom.Doom.Game;
+using ManagedDoom.Doom.Math;
 using ManagedDoom.Video;
 using Node = Godot.Node;
 

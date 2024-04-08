@@ -7,48 +7,48 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+using ManagedDoom.Audio;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.UserInput;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public sealed class YesNoConfirm : MenuDef
 {
-	public sealed class YesNoConfirm : MenuDef
+	private string[] text;
+	private Action action;
+
+	public YesNoConfirm(DoomMenu menu, string text, Action action) : base(menu)
 	{
-		private string[] text;
-		private Action action;
+		this.text = text.Split('\n');
+		this.action = action;
+	}
 
-		public YesNoConfirm(DoomMenu menu, string text, Action action) : base(menu)
+	public override bool DoEvent(DoomEvent e)
+	{
+		if (e.Type != EventType.KeyDown)
 		{
-			this.text = text.Split('\n');
-			this.action = action;
-		}
-
-		public override bool DoEvent(DoomEvent e)
-		{
-			if (e.Type != EventType.KeyDown)
-			{
-				return true;
-			}
-
-			if (e.Key == DoomKey.Y ||
-				e.Key == DoomKey.Enter ||
-				e.Key == DoomKey.Space)
-			{
-				action();
-				Menu.Close();
-				Menu.StartSound(Sfx.PISTOL);
-			}
-
-			if (e.Key == DoomKey.N ||
-				e.Key == DoomKey.Escape)
-			{
-				Menu.Close();
-				Menu.StartSound(Sfx.SWTCHX);
-			}
-
 			return true;
 		}
 
-		public IReadOnlyList<string> Text => text;
+		if (e.Key == DoomKey.Y ||
+			e.Key == DoomKey.Enter ||
+			e.Key == DoomKey.Space)
+		{
+			action();
+			Menu.Close();
+			Menu.StartSound(Sfx.PISTOL);
+		}
+
+		if (e.Key == DoomKey.N ||
+			e.Key == DoomKey.Escape)
+		{
+			Menu.Close();
+			Menu.StartSound(Sfx.SWTCHX);
+		}
+
+		return true;
 	}
+
+	public IReadOnlyList<string> Text => text;
 }

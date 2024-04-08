@@ -7,121 +7,116 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
+namespace ManagedDoom.Doom.Intermission;
 
-namespace ManagedDoom
+public sealed class Animation
 {
-	public sealed class Animation
+	private Intermission im;
+	private int number;
+
+	private AnimationType type;
+	private int period;
+	private int frameCount;
+	private int locationX;
+	private int locationY;
+	private int data;
+	private string[] patches;
+	private int patchNumber;
+	private int nextTic;
+
+	public Animation(Intermission intermission, AnimationInfo info, int number)
 	{
-		private Intermission im;
-		private int number;
+		im = intermission;
+		this.number = number;
 
-		private AnimationType type;
-		private int period;
-		private int frameCount;
-		private int locationX;
-		private int locationY;
-		private int data;
-		private string[] patches;
-		private int patchNumber;
-		private int nextTic;
+		type = info.Type;
+		period = info.Period;
+		frameCount = info.Count;
+		locationX = info.X;
+		locationY = info.Y;
+		data = info.Data;
 
-		public Animation(Intermission intermission, AnimationInfo info, int number)
+		patches = new string[frameCount];
+		for (var i = 0; i < frameCount; i++)
 		{
-			im = intermission;
-			this.number = number;
-
-			type = info.Type;
-			period = info.Period;
-			frameCount = info.Count;
-			locationX = info.X;
-			locationY = info.Y;
-			data = info.Data;
-
-			patches = new string[frameCount];
-			for (var i = 0; i < frameCount; i++)
+			// MONDO HACK!
+			if (im.Info.Episode != 1 || number != 8)
 			{
-				// MONDO HACK!
-				if (im.Info.Episode != 1 || number != 8)
-				{
-					patches[i] = "WIA" + im.Info.Episode + number.ToString("00") + i.ToString("00");
-				}
-				else
-				{
-					// HACK ALERT!
-					patches[i] = "WIA104" + i.ToString("00");
-				}
+				patches[i] = "WIA" + im.Info.Episode + number.ToString("00") + i.ToString("00");
+			}
+			else
+			{
+				// HACK ALERT!
+				patches[i] = "WIA104" + i.ToString("00");
 			}
 		}
+	}
 
-		public void Reset(int bgCount)
+	public void Reset(int bgCount)
+	{
+		patchNumber = -1;
+
+		// Specify the next time to draw it.
+		if (type == AnimationType.Always)
 		{
-			patchNumber = -1;
-
-			// Specify the next time to draw it.
-			if (type == AnimationType.Always)
-			{
-				nextTic = bgCount + 1 + (im.Random.Next() % period);
-			}
-			else if (type == AnimationType.Random)
-			{
-				nextTic = bgCount + 1 + (im.Random.Next() % data);
-			}
-			else if (type == AnimationType.Level)
-			{
-				nextTic = bgCount + 1;
-			}
+			nextTic = bgCount + 1 + (im.Random.Next() % period);
 		}
-
-		public void Update(int bgCount)
+		else if (type == AnimationType.Random)
 		{
-			if (bgCount == nextTic)
+			nextTic = bgCount + 1 + (im.Random.Next() % data);
+		}
+		else if (type == AnimationType.Level)
+		{
+			nextTic = bgCount + 1;
+		}
+	}
+
+	public void Update(int bgCount)
+	{
+		if (bgCount == nextTic)
+		{
+			switch (type)
 			{
-				switch (type)
-				{
-					case AnimationType.Always:
-						if (++patchNumber >= frameCount)
-						{
-							patchNumber = 0;
-						}
+				case AnimationType.Always:
+					if (++patchNumber >= frameCount)
+					{
+						patchNumber = 0;
+					}
+					nextTic = bgCount + period;
+					break;
+
+				case AnimationType.Random:
+					patchNumber++;
+					if (patchNumber == frameCount)
+					{
+						patchNumber = -1;
+						nextTic = bgCount + (im.Random.Next() % data);
+					}
+					else
+					{
 						nextTic = bgCount + period;
-						break;
+					}
+					break;
 
-					case AnimationType.Random:
+				case AnimationType.Level:
+					// Gawd-awful hack for level anims.
+					if (!(im.State == IntermissionState.StatCount && number == 7) && im.Info.NextLevel == Data)
+					{
 						patchNumber++;
 						if (patchNumber == frameCount)
 						{
-							patchNumber = -1;
-							nextTic = bgCount + (im.Random.Next() % data);
+							patchNumber--;
 						}
-						else
-						{
-							nextTic = bgCount + period;
-						}
-						break;
-
-					case AnimationType.Level:
-						// Gawd-awful hack for level anims.
-						if (!(im.State == IntermissionState.StatCount && number == 7) && im.Info.NextLevel == Data)
-						{
-							patchNumber++;
-							if (patchNumber == frameCount)
-							{
-								patchNumber--;
-							}
-							nextTic = bgCount + period;
-						}
-						break;
-				}
+						nextTic = bgCount + period;
+					}
+					break;
 			}
 		}
-
-		public int LocationX => locationX;
-		public int LocationY => locationY;
-		public int Data => data;
-		public IReadOnlyList<string> Patches => patches;
-		public int PatchNumber => patchNumber;
 	}
+
+	public int LocationX => locationX;
+	public int LocationY => locationY;
+	public int Data => data;
+	public IReadOnlyList<string> Patches => patches;
+	public int PatchNumber => patchNumber;
 }

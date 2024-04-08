@@ -7,17 +7,14 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum CeilingMoveType
 {
-	public enum CeilingMoveType
-	{
-		LowerToFloor,
-		RaiseToHighest,
-		LowerAndCrush,
-		CrushAndRaise,
-		FastCrushAndRaise,
-		SilentCrushAndRaise
-	}
+	LowerToFloor,
+	RaiseToHighest,
+	LowerAndCrush,
+	CrushAndRaise,
+	FastCrushAndRaise,
+	SilentCrushAndRaise
 }

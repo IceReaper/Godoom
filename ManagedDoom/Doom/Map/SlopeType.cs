@@ -7,15 +7,12 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+public enum SlopeType
 {
-	public enum SlopeType
-	{
-		Horizontal,
-		Vertical,
-		Positive,
-		Negative
-	}
+	Horizontal,
+	Vertical,
+	Positive,
+	Negative
 }

@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum ThinkerState
 {
-	public enum ThinkerState
-	{
-		Active,
-		InStasis,
-		Removed
-	}
+	Active,
+	InStasis,
+	Removed
 }

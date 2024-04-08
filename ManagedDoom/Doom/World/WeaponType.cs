@@ -7,25 +7,22 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum WeaponType
 {
-	public enum WeaponType
-	{
-		Fist,
-		Pistol,
-		Shotgun,
-		Chaingun,
-		Missile,
-		Plasma,
-		Bfg,
-		Chainsaw,
-		SuperShotgun,
+	Fist,
+	Pistol,
+	Shotgun,
+	Chaingun,
+	Missile,
+	Plasma,
+	Bfg,
+	Chainsaw,
+	SuperShotgun,
 
-		Count,
+	Count,
 
-		// No pending weapon change.
-		NoChange
-	}
+	// No pending weapon change.
+	NoChange
 }

@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum SectorActionResult
 {
-	public enum SectorActionResult
-	{
-		OK,
-		Crushed,
-		PastDestination
-	}
+	OK,
+	Crushed,
+	PastDestination
 }

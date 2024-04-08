@@ -7,74 +7,73 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.World;
+
+public sealed class GlowingLight : Thinker
 {
-	public sealed class GlowingLight : Thinker
+	private static readonly int glowSpeed = 8;
+
+	private World world;
+
+	private Sector sector;
+	private int minLight;
+	private int maxLight;
+	private int direction;
+
+	public GlowingLight(World world)
 	{
-		private static readonly int glowSpeed = 8;
+		this.world = world;
+	}
 
-		private World world;
-
-		private Sector sector;
-		private int minLight;
-		private int maxLight;
-		private int direction;
-
-		public GlowingLight(World world)
+	public override void Run()
+	{
+		switch (direction)
 		{
-			this.world = world;
-		}
-
-		public override void Run()
-		{
-			switch (direction)
-			{
-				case -1:
-					// Down.
-					sector.LightLevel -= glowSpeed;
-					if (sector.LightLevel <= minLight)
-					{
-						sector.LightLevel += glowSpeed;
-						direction = 1;
-					}
-					break;
-
-				case 1:
-					// Up.
+			case -1:
+				// Down.
+				sector.LightLevel -= glowSpeed;
+				if (sector.LightLevel <= minLight)
+				{
 					sector.LightLevel += glowSpeed;
-					if (sector.LightLevel >= maxLight)
-					{
-						sector.LightLevel -= glowSpeed;
-						direction = -1;
-					}
-					break;
-			}
-		}
+					direction = 1;
+				}
+				break;
 
-		public Sector Sector
-		{
-			get => sector;
-			set => sector = value;
+			case 1:
+				// Up.
+				sector.LightLevel += glowSpeed;
+				if (sector.LightLevel >= maxLight)
+				{
+					sector.LightLevel -= glowSpeed;
+					direction = -1;
+				}
+				break;
 		}
+	}
 
-		public int MinLight
-		{
-			get => minLight;
-			set => minLight = value;
-		}
+	public Sector Sector
+	{
+		get => sector;
+		set => sector = value;
+	}
 
-		public int MaxLight
-		{
-			get => maxLight;
-			set => maxLight = value;
-		}
+	public int MinLight
+	{
+		get => minLight;
+		set => minLight = value;
+	}
 
-		public int Direction
-		{
-			get => direction;
-			set => direction = value;
-		}
+	public int MaxLight
+	{
+		get => maxLight;
+		set => maxLight = value;
+	}
+
+	public int Direction
+	{
+		get => direction;
+		set => direction = value;
 	}
 }

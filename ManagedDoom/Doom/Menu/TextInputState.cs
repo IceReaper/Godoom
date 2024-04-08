@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Menu;
 
-namespace ManagedDoom
+public enum TextInputState
 {
-	public enum TextInputState
-	{
-		Typing,
-		Finished,
-		Canceled
-	}
+	Typing,
+	Finished,
+	Canceled
 }

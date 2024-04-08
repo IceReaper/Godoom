@@ -7,19 +7,16 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum CardType
 {
-	public enum CardType
-	{
-		BlueCard,
-		YellowCard,
-		RedCard,
-		BlueSkull,
-		YellowSkull,
-		RedSkull,
+	BlueCard,
+	YellowCard,
+	RedCard,
+	BlueSkull,
+	YellowSkull,
+	RedSkull,
 
-		Count
-	}
+	Count
 }

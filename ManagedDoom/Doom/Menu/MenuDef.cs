@@ -7,29 +7,28 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Event;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public abstract class MenuDef
 {
-	public abstract class MenuDef
+	private DoomMenu menu;
+
+	public MenuDef(DoomMenu menu)
 	{
-		private DoomMenu menu;
-
-		public MenuDef(DoomMenu menu)
-		{
-			this.menu = menu;
-		}
-
-		public virtual void Open()
-		{
-		}
-
-		public virtual void Update()
-		{
-		}
-
-		public abstract bool DoEvent(DoomEvent e);
-
-		public DoomMenu Menu => menu;
+		this.menu = menu;
 	}
+
+	public virtual void Open()
+	{
+	}
+
+	public virtual void Update()
+	{
+	}
+
+	public abstract bool DoEvent(DoomEvent e);
+
+	public DoomMenu Menu => menu;
 }

@@ -7,79 +7,76 @@
  * information, see COPYING.
  */
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Graphics.Dummy;
+
+public sealed class DummyFlatLookup : IFlatLookup
 {
-	public sealed class DummyFlatLookup : IFlatLookup
+	private Flat[] flats;
+
+	private Dictionary<string, Flat> nameToFlat;
+	private Dictionary<string, int> nameToNumber;
+
+	private int skyFlatNumber;
+	private Flat skyFlat;
+
+	public DummyFlatLookup(Wad.Wad wad)
 	{
-		private Flat[] flats;
+		var firstFlat = wad.GetLumpNumber("F_START") + 1;
+		var lastFlat = wad.GetLumpNumber("F_END") - 1;
+		var count = lastFlat - firstFlat + 1;
 
-		private Dictionary<string, Flat> nameToFlat;
-		private Dictionary<string, int> nameToNumber;
+		flats = new Flat[count];
 
-		private int skyFlatNumber;
-		private Flat skyFlat;
+		nameToFlat = new Dictionary<string, Flat>();
+		nameToNumber = new Dictionary<string, int>();
 
-		public DummyFlatLookup(Wad wad)
+		for (var lump = firstFlat; lump <= lastFlat; lump++)
 		{
-			var firstFlat = wad.GetLumpNumber("F_START") + 1;
-			var lastFlat = wad.GetLumpNumber("F_END") - 1;
-			var count = lastFlat - firstFlat + 1;
-
-			flats = new Flat[count];
-
-			nameToFlat = new Dictionary<string, Flat>();
-			nameToNumber = new Dictionary<string, int>();
-
-			for (var lump = firstFlat; lump <= lastFlat; lump++)
+			if (wad.GetLumpSize(lump) != 4096)
 			{
-				if (wad.GetLumpSize(lump) != 4096)
-				{
-					continue;
-				}
-
-				var number = lump - firstFlat;
-				var name = wad.LumpInfos[lump].Name;
-				var flat = name != "F_SKY1" ? DummyData.GetFlat() : DummyData.GetSkyFlat();
-
-				flats[number] = flat;
-				nameToFlat[name] = flat;
-				nameToNumber[name] = number;
+				continue;
 			}
 
-			skyFlatNumber = nameToNumber["F_SKY1"];
-			skyFlat = nameToFlat["F_SKY1"];
+			var number = lump - firstFlat;
+			var name = wad.LumpInfos[lump].Name;
+			var flat = name != "F_SKY1" ? DummyData.GetFlat() : DummyData.GetSkyFlat();
+
+			flats[number] = flat;
+			nameToFlat[name] = flat;
+			nameToNumber[name] = number;
 		}
 
-		public int GetNumber(string name)
-		{
-			if (nameToNumber.ContainsKey(name))
-			{
-				return nameToNumber[name];
-			}
-			else
-			{
-				return -1;
-			}
-		}
-
-		public IEnumerator<Flat> GetEnumerator()
-		{
-			return ((IEnumerable<Flat>)flats).GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return flats.GetEnumerator();
-		}
-
-		public int Count => flats.Length;
-		public Flat this[int num] => flats[num];
-		public Flat this[string name] => nameToFlat[name];
-		public int SkyFlatNumber => skyFlatNumber;
-		public Flat SkyFlat => skyFlat;
+		skyFlatNumber = nameToNumber["F_SKY1"];
+		skyFlat = nameToFlat["F_SKY1"];
 	}
+
+	public int GetNumber(string name)
+	{
+		if (nameToNumber.ContainsKey(name))
+		{
+			return nameToNumber[name];
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	public IEnumerator<Flat> GetEnumerator()
+	{
+		return ((IEnumerable<Flat>)flats).GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return flats.GetEnumerator();
+	}
+
+	public int Count => flats.Length;
+	public Flat this[int num] => flats[num];
+	public Flat this[string name] => nameToFlat[name];
+	public int SkyFlatNumber => skyFlatNumber;
+	public Flat SkyFlat => skyFlat;
 }

@@ -7,15 +7,12 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom;
 
-namespace ManagedDoom
+public enum DoomState
 {
-	public enum DoomState
-	{
-		None,
-		Opening,
-		DemoPlayback,
-		Game
-	}
+	None,
+	Opening,
+	DemoPlayback,
+	Game
 }

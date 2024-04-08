@@ -9,6 +9,9 @@
 
 using Godot;
 using ManagedDoom;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.Doom.Game;
+using ManagedDoom.Doom.World;
 using ManagedDoom.UserInput;
 
 namespace Godoom;

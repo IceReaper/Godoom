@@ -7,16 +7,13 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Audio;
 
-namespace ManagedDoom
+public enum SfxType
 {
-	public enum SfxType
-	{
-		Diffuse,
-		Weapon,
-		Voice,
-		Footstep,
-		Misc
-	}
+	Diffuse,
+	Weapon,
+	Voice,
+	Footstep,
+	Misc
 }

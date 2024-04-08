@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Opening;
 
-namespace ManagedDoom
+public enum OpeningSequenceState
 {
-	public enum OpeningSequenceState
-	{
-		Title,
-		Credit,
-		Demo
-	}
+	Title,
+	Credit,
+	Demo
 }

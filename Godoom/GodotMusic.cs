@@ -10,6 +10,9 @@
 using Godoom.Music;
 using ManagedDoom;
 using ManagedDoom.Audio;
+using ManagedDoom.Doom.Game;
+using ManagedDoom.Doom.Info;
+using ManagedDoom.Doom.Wad;
 using System.Globalization;
 using Node = Godot.Node;
 using StreamAudioStreamPlayer = Godoom.Nodes.StreamAudioStreamPlayer;

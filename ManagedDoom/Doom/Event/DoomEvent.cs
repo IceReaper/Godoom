@@ -7,22 +7,21 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.UserInput;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Event;
+
+public sealed class DoomEvent
 {
-	public sealed class DoomEvent
+	private EventType type;
+	private DoomKey key;
+
+	public DoomEvent(EventType type, DoomKey key)
 	{
-		private EventType type;
-		private DoomKey key;
-
-		public DoomEvent(EventType type, DoomKey key)
-		{
-			this.type = type;
-			this.key = key;
-		}
-
-		public EventType Type => type;
-		public DoomKey Key => key;
+		this.type = type;
+		this.key = key;
 	}
+
+	public EventType Type => type;
+	public DoomKey Key => key;
 }

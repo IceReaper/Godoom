@@ -7,12 +7,9 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+public enum SectorSpecial
 {
-	public enum SectorSpecial
-	{
-		Normal = 0
-	}
+	Normal = 0
 }

@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+public enum GameState
 {
-	public enum GameState
-	{
-		Level,
-		Intermission,
-		Finale
-	}
+	Level,
+	Intermission,
+	Finale
 }

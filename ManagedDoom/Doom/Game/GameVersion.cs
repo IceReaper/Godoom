@@ -7,15 +7,12 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+public enum GameVersion
 {
-	public enum GameVersion
-	{
-		Version109,
-		Ultimate,
-		Final,
-		Final2
-	}
+	Version109,
+	Ultimate,
+	Final,
+	Final2
 }

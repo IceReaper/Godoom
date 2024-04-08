@@ -9,6 +9,7 @@
 
 using Godot;
 using ManagedDoom;
+using ManagedDoom.Doom.Game;
 
 namespace Godoom;
 

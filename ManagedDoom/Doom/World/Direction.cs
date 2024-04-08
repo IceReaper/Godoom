@@ -7,21 +7,18 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum Direction
 {
-	public enum Direction
-	{
-		East,
-		Northeast,
-		North,
-		Northwest,
-		west,
-		Southwest,
-		South,
-		Southeast,
-		None,
-		Count
-	}
+	East,
+	Northeast,
+	North,
+	Northwest,
+	west,
+	Southwest,
+	South,
+	Southeast,
+	None,
+	Count
 }

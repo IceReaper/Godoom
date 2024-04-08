@@ -7,90 +7,89 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.Doom.Game;
 using System.Diagnostics;
-using System.IO;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Opening;
+
+public sealed class DemoPlayback
 {
-	public sealed class DemoPlayback
+	private Demo demo;
+	private TicCmd[] cmds;
+	private DoomGame game;
+
+	private Stopwatch stopwatch;
+	private int frameCount;
+
+	public DemoPlayback(CommandLineArgs args, GameContent content, GameOptions options, string demoName)
 	{
-		private Demo demo;
-		private TicCmd[] cmds;
-		private DoomGame game;
-
-		private Stopwatch stopwatch;
-		private int frameCount;
-
-		public DemoPlayback(CommandLineArgs args, GameContent content, GameOptions options, string demoName)
+		if (File.Exists(demoName))
 		{
-			if (File.Exists(demoName))
+			demo = new Demo(demoName);
+		}
+		else if (File.Exists(demoName + ".lmp"))
+		{
+			demo = new Demo(demoName + ".lmp");
+		}
+		else
+		{
+			var lumpName = demoName.ToUpper();
+			if (content.Wad.GetLumpNumber(lumpName) == -1)
 			{
-				demo = new Demo(demoName);
+				throw new Exception("Demo '" + demoName + "' was not found!");
 			}
-			else if (File.Exists(demoName + ".lmp"))
-			{
-				demo = new Demo(demoName + ".lmp");
-			}
-			else
-			{
-				var lumpName = demoName.ToUpper();
-				if (content.Wad.GetLumpNumber(lumpName) == -1)
-				{
-					throw new Exception("Demo '" + demoName + "' was not found!");
-				}
-				demo = new Demo(content.Wad.ReadLump(lumpName));
-			}
-
-			demo.Options.GameVersion = options.GameVersion;
-			demo.Options.GameMode = options.GameMode;
-			demo.Options.MissionPack = options.MissionPack;
-			demo.Options.Video = options.Video;
-			demo.Options.Sound = options.Sound;
-			demo.Options.Music = options.Music;
-
-			if (args.solonet.Present)
-			{
-				demo.Options.NetGame = true;
-			}
-
-			cmds = new TicCmd[Player.MaxPlayerCount];
-			for (var i = 0; i < Player.MaxPlayerCount; i++)
-			{
-				cmds[i] = new TicCmd();
-			}
-
-			game = new DoomGame(content, demo.Options);
-			game.DeferedInitNew();
-
-			stopwatch = new Stopwatch();
+			demo = new Demo(content.Wad.ReadLump(lumpName));
 		}
 
-		public UpdateResult Update()
-		{
-			if (!stopwatch.IsRunning)
-			{
-				stopwatch.Start();
-			}
+		demo.Options.GameVersion = options.GameVersion;
+		demo.Options.GameMode = options.GameMode;
+		demo.Options.MissionPack = options.MissionPack;
+		demo.Options.Video = options.Video;
+		demo.Options.Sound = options.Sound;
+		demo.Options.Music = options.Music;
 
-			if (!demo.ReadCmd(cmds))
-			{
-				stopwatch.Stop();
-				return UpdateResult.Completed;
-			}
-			else
-			{
-				frameCount++;
-				return game.Update(cmds);
-			}
+		if (args.solonet.Present)
+		{
+			demo.Options.NetGame = true;
 		}
 
-		public void DoEvent(DoomEvent e)
+		cmds = new TicCmd[Player.MaxPlayerCount];
+		for (var i = 0; i < Player.MaxPlayerCount; i++)
 		{
-			game.DoEvent(e);
+			cmds[i] = new TicCmd();
 		}
 
-		public DoomGame Game => game;
-		public double Fps => frameCount / stopwatch.Elapsed.TotalSeconds;
+		game = new DoomGame(content, demo.Options);
+		game.DeferedInitNew();
+
+		stopwatch = new Stopwatch();
 	}
+
+	public UpdateResult Update()
+	{
+		if (!stopwatch.IsRunning)
+		{
+			stopwatch.Start();
+		}
+
+		if (!demo.ReadCmd(cmds))
+		{
+			stopwatch.Stop();
+			return UpdateResult.Completed;
+		}
+		else
+		{
+			frameCount++;
+			return game.Update(cmds);
+		}
+	}
+
+	public void DoEvent(DoomEvent e)
+	{
+		game.DoEvent(e);
+	}
+
+	public DoomGame Game => game;
+	public double Fps => frameCount / stopwatch.Elapsed.TotalSeconds;
 }

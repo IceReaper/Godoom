@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum ButtonPosition
 {
-	public enum ButtonPosition
-	{
-		Top,
-		Middle,
-		Bottom
-	}
+	Top,
+	Middle,
+	Bottom
 }

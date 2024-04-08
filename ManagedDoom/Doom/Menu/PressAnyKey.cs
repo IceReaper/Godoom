@@ -7,40 +7,39 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+using ManagedDoom.Audio;
+using ManagedDoom.Doom.Event;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public sealed class PressAnyKey : MenuDef
 {
-	public sealed class PressAnyKey : MenuDef
+	private string[] text;
+	private Action action;
+
+	public PressAnyKey(DoomMenu menu, string text, Action action) : base(menu)
 	{
-		private string[] text;
-		private Action action;
+		this.text = text.Split('\n');
+		this.action = action;
+	}
 
-		public PressAnyKey(DoomMenu menu, string text, Action action) : base(menu)
+	public override bool DoEvent(DoomEvent e)
+	{
+		if (e.Type == EventType.KeyDown)
 		{
-			this.text = text.Split('\n');
-			this.action = action;
-		}
-
-		public override bool DoEvent(DoomEvent e)
-		{
-			if (e.Type == EventType.KeyDown)
+			if (action != null)
 			{
-				if (action != null)
-				{
-					action();
-				}
-
-				Menu.Close();
-				Menu.StartSound(Sfx.SWTCHX);
-
-				return true;
+				action();
 			}
+
+			Menu.Close();
+			Menu.StartSound(Sfx.SWTCHX);
 
 			return true;
 		}
 
-		public IReadOnlyList<string> Text => text;
+		return true;
 	}
+
+	public IReadOnlyList<string> Text => text;
 }

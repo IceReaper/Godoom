@@ -7,217 +7,217 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+using ManagedDoom.Audio;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.UserInput;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public sealed class SelectableMenu : MenuDef
 {
-	public sealed class SelectableMenu : MenuDef
+	private string[] name;
+	private int[] titleX;
+	private int[] titleY;
+	private MenuItem[] items;
+
+	private int index;
+	private MenuItem choice;
+
+	private TextInput textInput;
+
+	public SelectableMenu(
+		DoomMenu menu,
+		string name, int titleX, int titleY,
+		int firstChoice,
+		params MenuItem[] items) : base(menu)
 	{
-		private string[] name;
-		private int[] titleX;
-		private int[] titleY;
-		private MenuItem[] items;
+		this.name = new[] { name };
+		this.titleX = new[] { titleX };
+		this.titleY = new[] { titleY };
+		this.items = items;
 
-		private int index;
-		private MenuItem choice;
+		index = firstChoice;
+		choice = items[index];
+	}
 
-		private TextInput textInput;
+	public SelectableMenu(
+		DoomMenu menu,
+		string name1, int titleX1, int titleY1,
+		string name2, int titleX2, int titleY2,
+		int firstChoice,
+		params MenuItem[] items) : base(menu)
+	{
+		this.name = new[] { name1, name2 };
+		this.titleX = new[] { titleX1, titleX2 };
+		this.titleY = new[] { titleY1, titleY2 };
+		this.items = items;
 
-		public SelectableMenu(
-			DoomMenu menu,
-			string name, int titleX, int titleY,
-			int firstChoice,
-			params MenuItem[] items) : base(menu)
+		index = firstChoice;
+		choice = items[index];
+	}
+
+	public override void Open()
+	{
+		foreach (var item in items)
 		{
-			this.name = new[] { name };
-			this.titleX = new[] { titleX };
-			this.titleY = new[] { titleY };
-			this.items = items;
-
-			index = firstChoice;
-			choice = items[index];
-		}
-
-		public SelectableMenu(
-			DoomMenu menu,
-			string name1, int titleX1, int titleY1,
-			string name2, int titleX2, int titleY2,
-			int firstChoice,
-			params MenuItem[] items) : base(menu)
-		{
-			this.name = new[] { name1, name2 };
-			this.titleX = new[] { titleX1, titleX2 };
-			this.titleY = new[] { titleY1, titleY2 };
-			this.items = items;
-
-			index = firstChoice;
-			choice = items[index];
-		}
-
-		public override void Open()
-		{
-			foreach (var item in items)
+			var toggle = item as ToggleMenuItem;
+			if (toggle != null)
 			{
-				var toggle = item as ToggleMenuItem;
-				if (toggle != null)
-				{
-					toggle.Reset();
-				}
+				toggle.Reset();
+			}
 
-				var slider = item as SliderMenuItem;
-				if (slider != null)
-				{
-					slider.Reset();
-				}
+			var slider = item as SliderMenuItem;
+			if (slider != null)
+			{
+				slider.Reset();
 			}
 		}
+	}
 
-		private void Up()
+	private void Up()
+	{
+		index--;
+		if (index < 0)
 		{
-			index--;
-			if (index < 0)
-			{
-				index = items.Length - 1;
-			}
-
-			choice = items[index];
+			index = items.Length - 1;
 		}
 
-		private void Down()
-		{
-			index++;
-			if (index >= items.Length)
-			{
-				index = 0;
-			}
+		choice = items[index];
+	}
 
-			choice = items[index];
+	private void Down()
+	{
+		index++;
+		if (index >= items.Length)
+		{
+			index = 0;
 		}
 
-		public override bool DoEvent(DoomEvent e)
+		choice = items[index];
+	}
+
+	public override bool DoEvent(DoomEvent e)
+	{
+		if (e.Type != EventType.KeyDown)
 		{
-			if (e.Type != EventType.KeyDown)
-			{
-				return true;
-			}
-
-			if (textInput != null)
-			{
-				var result = textInput.DoEvent(e);
-
-				if (textInput.State == TextInputState.Canceled)
-				{
-					textInput = null;
-				}
-				else if (textInput.State == TextInputState.Finished)
-				{
-					textInput = null;
-				}
-
-				if (result)
-				{
-					return true;
-				}
-			}
-
-			if (e.Key == DoomKey.Up)
-			{
-				Up();
-				Menu.StartSound(Sfx.PSTOP);
-			}
-
-			if (e.Key == DoomKey.Down)
-			{
-				Down();
-				Menu.StartSound(Sfx.PSTOP);
-			}
-
-			if (e.Key == DoomKey.Left)
-			{
-				var toggle = choice as ToggleMenuItem;
-				if (toggle != null)
-				{
-					toggle.Down();
-					Menu.StartSound(Sfx.PISTOL);
-				}
-
-				var slider = choice as SliderMenuItem;
-				if (slider != null)
-				{
-					slider.Down();
-					Menu.StartSound(Sfx.STNMOV);
-				}
-			}
-
-			if (e.Key == DoomKey.Right)
-			{
-				var toggle = choice as ToggleMenuItem;
-				if (toggle != null)
-				{
-					toggle.Up();
-					Menu.StartSound(Sfx.PISTOL);
-				}
-
-				var slider = choice as SliderMenuItem;
-				if (slider != null)
-				{
-					slider.Up();
-					Menu.StartSound(Sfx.STNMOV);
-				}
-			}
-
-			if (e.Key == DoomKey.Enter)
-			{
-				var toggle = choice as ToggleMenuItem;
-				if (toggle != null)
-				{
-					toggle.Up();
-					Menu.StartSound(Sfx.PISTOL);
-				}
-
-				var simple = choice as SimpleMenuItem;
-				if (simple != null)
-				{
-					if (simple.Selectable)
-					{
-						if (simple.Action != null)
-						{
-							simple.Action();
-						}
-						if (simple.Next != null)
-						{
-							Menu.SetCurrent(simple.Next);
-						}
-						else
-						{
-							Menu.Close();
-						}
-					}
-					Menu.StartSound(Sfx.PISTOL);
-					return true;
-				}
-
-				if (choice.Next != null)
-				{
-					Menu.SetCurrent(choice.Next);
-					Menu.StartSound(Sfx.PISTOL);
-				}
-			}
-
-			if (e.Key == DoomKey.Escape)
-			{
-				Menu.Close();
-				Menu.StartSound(Sfx.SWTCHX);
-			}
-
 			return true;
 		}
 
-		public IReadOnlyList<string> Name => name;
-		public IReadOnlyList<int> TitleX => titleX;
-		public IReadOnlyList<int> TitleY => titleY;
-		public IReadOnlyList<MenuItem> Items => items;
-		public MenuItem Choice => choice;
+		if (textInput != null)
+		{
+			var result = textInput.DoEvent(e);
+
+			if (textInput.State == TextInputState.Canceled)
+			{
+				textInput = null;
+			}
+			else if (textInput.State == TextInputState.Finished)
+			{
+				textInput = null;
+			}
+
+			if (result)
+			{
+				return true;
+			}
+		}
+
+		if (e.Key == DoomKey.Up)
+		{
+			Up();
+			Menu.StartSound(Sfx.PSTOP);
+		}
+
+		if (e.Key == DoomKey.Down)
+		{
+			Down();
+			Menu.StartSound(Sfx.PSTOP);
+		}
+
+		if (e.Key == DoomKey.Left)
+		{
+			var toggle = choice as ToggleMenuItem;
+			if (toggle != null)
+			{
+				toggle.Down();
+				Menu.StartSound(Sfx.PISTOL);
+			}
+
+			var slider = choice as SliderMenuItem;
+			if (slider != null)
+			{
+				slider.Down();
+				Menu.StartSound(Sfx.STNMOV);
+			}
+		}
+
+		if (e.Key == DoomKey.Right)
+		{
+			var toggle = choice as ToggleMenuItem;
+			if (toggle != null)
+			{
+				toggle.Up();
+				Menu.StartSound(Sfx.PISTOL);
+			}
+
+			var slider = choice as SliderMenuItem;
+			if (slider != null)
+			{
+				slider.Up();
+				Menu.StartSound(Sfx.STNMOV);
+			}
+		}
+
+		if (e.Key == DoomKey.Enter)
+		{
+			var toggle = choice as ToggleMenuItem;
+			if (toggle != null)
+			{
+				toggle.Up();
+				Menu.StartSound(Sfx.PISTOL);
+			}
+
+			var simple = choice as SimpleMenuItem;
+			if (simple != null)
+			{
+				if (simple.Selectable)
+				{
+					if (simple.Action != null)
+					{
+						simple.Action();
+					}
+					if (simple.Next != null)
+					{
+						Menu.SetCurrent(simple.Next);
+					}
+					else
+					{
+						Menu.Close();
+					}
+				}
+				Menu.StartSound(Sfx.PISTOL);
+				return true;
+			}
+
+			if (choice.Next != null)
+			{
+				Menu.SetCurrent(choice.Next);
+				Menu.StartSound(Sfx.PISTOL);
+			}
+		}
+
+		if (e.Key == DoomKey.Escape)
+		{
+			Menu.Close();
+			Menu.StartSound(Sfx.SWTCHX);
+		}
+
+		return true;
 	}
+
+	public IReadOnlyList<string> Name => name;
+	public IReadOnlyList<int> TitleX => titleX;
+	public IReadOnlyList<int> TitleY => titleY;
+	public IReadOnlyList<MenuItem> Items => items;
+	public MenuItem Choice => choice;
 }

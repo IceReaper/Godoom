@@ -7,15 +7,12 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Event;
 
-namespace ManagedDoom
+public enum EventType
 {
-	public enum EventType
-	{
-		KeyDown,
-		KeyUp,
-		Mouse,
-		Joystick
-	}
+	KeyDown,
+	KeyUp,
+	Mouse,
+	Joystick
 }

@@ -7,59 +7,58 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Game;
 
-namespace ManagedDoom.UserInput
+namespace ManagedDoom.UserInput;
+
+public sealed class NullUserInput : IUserInput
 {
-	public sealed class NullUserInput : IUserInput
+	private static NullUserInput instance;
+
+	public static NullUserInput GetInstance()
 	{
-		private static NullUserInput instance;
-
-		public static NullUserInput GetInstance()
+		if (instance == null)
 		{
-			if (instance == null)
-			{
-				instance = new NullUserInput();
-			}
-
-			return instance;
+			instance = new NullUserInput();
 		}
 
-		public void BuildTicCmd(TicCmd cmd)
+		return instance;
+	}
+
+	public void BuildTicCmd(TicCmd cmd)
+	{
+		cmd.Clear();
+	}
+
+	public void Reset()
+	{
+	}
+
+	public void GrabMouse()
+	{
+	}
+
+	public void ReleaseMouse()
+	{
+	}
+
+	public int MaxMouseSensitivity
+	{
+		get
 		{
-			cmd.Clear();
+			return 9;
+		}
+	}
+
+	public int MouseSensitivity
+	{
+		get
+		{
+			return 3;
 		}
 
-		public void Reset()
+		set
 		{
-		}
-
-		public void GrabMouse()
-		{
-		}
-
-		public void ReleaseMouse()
-		{
-		}
-
-		public int MaxMouseSensitivity
-		{
-			get
-			{
-				return 9;
-			}
-		}
-
-		public int MouseSensitivity
-		{
-			get
-			{
-				return 3;
-			}
-
-			set
-			{
-			}
 		}
 	}
 }

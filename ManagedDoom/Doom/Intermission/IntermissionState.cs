@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Intermission;
 
-namespace ManagedDoom
+public enum IntermissionState
 {
-	public enum IntermissionState
-	{
-		NoState = -1,
-		StatCount,
-		ShowNextLoc
-	}
+	NoState = -1,
+	StatCount,
+	ShowNextLoc
 }

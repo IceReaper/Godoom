@@ -7,98 +7,97 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Intermission;
+
+public class IntermissionInfo
 {
-	public class IntermissionInfo
+	// Episode number (0-2).
+	private int episode;
+
+	// If true, splash the secret level.
+	private bool didSecret;
+
+	// Previous and next levels, origin 0.
+	private int lastLevel;
+	private int nextLevel;
+
+	private int maxKillCount;
+	private int maxItemCount;
+	private int maxSecretCount;
+	private int totalFrags;
+
+	// The par time.
+	private int parTime;
+
+	private PlayerScores[] players;
+
+	public IntermissionInfo()
 	{
-		// Episode number (0-2).
-		private int episode;
-
-		// If true, splash the secret level.
-		private bool didSecret;
-
-		// Previous and next levels, origin 0.
-		private int lastLevel;
-		private int nextLevel;
-
-		private int maxKillCount;
-		private int maxItemCount;
-		private int maxSecretCount;
-		private int totalFrags;
-
-		// The par time.
-		private int parTime;
-
-		private PlayerScores[] players;
-
-		public IntermissionInfo()
+		players = new PlayerScores[Player.MaxPlayerCount];
+		for (var i = 0; i < Player.MaxPlayerCount; i++)
 		{
-			players = new PlayerScores[Player.MaxPlayerCount];
-			for (var i = 0; i < Player.MaxPlayerCount; i++)
-			{
-				players[i] = new PlayerScores();
-			}
+			players[i] = new PlayerScores();
 		}
+	}
 
-		public int Episode
-		{
-			get => episode;
-			set => episode = value;
-		}
+	public int Episode
+	{
+		get => episode;
+		set => episode = value;
+	}
 
-		public bool DidSecret
-		{
-			get => didSecret;
-			set => didSecret = value;
-		}
+	public bool DidSecret
+	{
+		get => didSecret;
+		set => didSecret = value;
+	}
 
-		public int LastLevel
-		{
-			get => lastLevel;
-			set => lastLevel = value;
-		}
+	public int LastLevel
+	{
+		get => lastLevel;
+		set => lastLevel = value;
+	}
 
-		public int NextLevel
-		{
-			get => nextLevel;
-			set => nextLevel = value;
-		}
+	public int NextLevel
+	{
+		get => nextLevel;
+		set => nextLevel = value;
+	}
 
-		public int MaxKillCount
-		{
-			get => Math.Max(maxKillCount, 1);
-			set => maxKillCount = value;
-		}
+	public int MaxKillCount
+	{
+		get => System.Math.Max(maxKillCount, 1);
+		set => maxKillCount = value;
+	}
 
-		public int MaxItemCount
-		{
-			get => Math.Max(maxItemCount, 1);
-			set => maxItemCount = value;
-		}
+	public int MaxItemCount
+	{
+		get => System.Math.Max(maxItemCount, 1);
+		set => maxItemCount = value;
+	}
 
-		public int MaxSecretCount
-		{
-			get => Math.Max(maxSecretCount, 1);
-			set => maxSecretCount = value;
-		}
+	public int MaxSecretCount
+	{
+		get => System.Math.Max(maxSecretCount, 1);
+		set => maxSecretCount = value;
+	}
 
-		public int TotalFrags
-		{
-			get => Math.Max(totalFrags, 1);
-			set => totalFrags = value;
-		}
+	public int TotalFrags
+	{
+		get => System.Math.Max(totalFrags, 1);
+		set => totalFrags = value;
+	}
 
-		public int ParTime
-		{
-			get => parTime;
-			set => parTime = value;
-		}
+	public int ParTime
+	{
+		get => parTime;
+		set => parTime = value;
+	}
 
-		public PlayerScores[] Players
-		{
-			get => players;
-		}
+	public PlayerScores[] Players
+	{
+		get => players;
 	}
 }

@@ -7,78 +7,77 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.World;
 
-namespace ManagedDoom.Audio
+namespace ManagedDoom.Audio;
+
+public sealed class NullSound : ISound
 {
-	public sealed class NullSound : ISound
+	private static NullSound instance;
+
+	public static NullSound GetInstance()
 	{
-		private static NullSound instance;
-
-		public static NullSound GetInstance()
+		if (instance == null)
 		{
-			if (instance == null)
-			{
-				instance = new NullSound();
-			}
-
-			return instance;
+			instance = new NullSound();
 		}
 
-		public void SetListener(Mobj listerner)
+		return instance;
+	}
+
+	public void SetListener(Mobj listerner)
+	{
+	}
+
+	public void Update()
+	{
+	}
+
+	public void StartSound(Sfx sfx)
+	{
+	}
+
+	public void StartSound(Mobj mobj, Sfx sfx, SfxType type)
+	{
+	}
+
+	public void StartSound(Mobj mobj, Sfx sfx, SfxType type, int volume)
+	{
+	}
+
+	public void StopSound(Mobj mobj)
+	{
+	}
+
+	public void Reset()
+	{
+	}
+
+	public void Pause()
+	{
+	}
+
+	public void Resume()
+	{
+	}
+
+	public int MaxVolume
+	{
+		get
 		{
+			return 15;
+		}
+	}
+
+	public int Volume
+	{
+		get
+		{
+			return 0;
 		}
 
-		public void Update()
+		set
 		{
-		}
-
-		public void StartSound(Sfx sfx)
-		{
-		}
-
-		public void StartSound(Mobj mobj, Sfx sfx, SfxType type)
-		{
-		}
-
-		public void StartSound(Mobj mobj, Sfx sfx, SfxType type, int volume)
-		{
-		}
-
-		public void StopSound(Mobj mobj)
-		{
-		}
-
-		public void Reset()
-		{
-		}
-
-		public void Pause()
-		{
-		}
-
-		public void Resume()
-		{
-		}
-
-		public int MaxVolume
-		{
-			get
-			{
-				return 15;
-			}
-		}
-
-		public int Volume
-		{
-			get
-			{
-				return 0;
-			}
-
-			set
-			{
-			}
 		}
 	}
 }

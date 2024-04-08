@@ -7,19 +7,16 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Graphics;
 
-namespace ManagedDoom
+public sealed class SpriteDef
 {
-	public sealed class SpriteDef
+	private SpriteFrame[] frames;
+
+	public SpriteDef(SpriteFrame[] frames)
 	{
-		private SpriteFrame[] frames;
-
-		public SpriteDef(SpriteFrame[] frames)
-		{
-			this.frames = frames;
-		}
-
-		public SpriteFrame[] Frames => frames;
+		this.frames = frames;
 	}
+
+	public SpriteFrame[] Frames => frames;
 }

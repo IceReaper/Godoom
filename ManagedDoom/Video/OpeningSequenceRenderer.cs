@@ -7,43 +7,45 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Graphics;
+using ManagedDoom.Doom.Math;
+using ManagedDoom.Doom.Opening;
+using ManagedDoom.Doom.Wad;
 
-namespace ManagedDoom.Video
+namespace ManagedDoom.Video;
+
+public class OpeningSequenceRenderer
 {
-	public class OpeningSequenceRenderer
+	private DrawScreen screen;
+	private Renderer parent;
+
+	private PatchCache cache;
+
+	public OpeningSequenceRenderer(Wad wad, DrawScreen screen, Renderer parent)
 	{
-		private DrawScreen screen;
-		private Renderer parent;
+		this.screen = screen;
+		this.parent = parent;
 
-		private PatchCache cache;
+		cache = new PatchCache(wad);
+	}
 
-		public OpeningSequenceRenderer(Wad wad, DrawScreen screen, Renderer parent)
+	public void Render(OpeningSequence sequence, Fixed frameFrac)
+	{
+		var scale = screen.Width / 320;
+
+		switch (sequence.State)
 		{
-			this.screen = screen;
-			this.parent = parent;
+			case OpeningSequenceState.Title:
+				screen.DrawPatch(cache["TITLEPIC"], 0, 0, scale);
+				break;
 
-			cache = new PatchCache(wad);
-		}
+			case OpeningSequenceState.Demo:
+				parent.RenderGame(sequence.DemoGame, frameFrac);
+				break;
 
-		public void Render(OpeningSequence sequence, Fixed frameFrac)
-		{
-			var scale = screen.Width / 320;
-
-			switch (sequence.State)
-			{
-				case OpeningSequenceState.Title:
-					screen.DrawPatch(cache["TITLEPIC"], 0, 0, scale);
-					break;
-
-				case OpeningSequenceState.Demo:
-					parent.RenderGame(sequence.DemoGame, frameFrac);
-					break;
-
-				case OpeningSequenceState.Credit:
-					screen.DrawPatch(cache["CREDIT"], 0, 0, scale);
-					break;
-			}
+			case OpeningSequenceState.Credit:
+				screen.DrawPatch(cache["CREDIT"], 0, 0, scale);
+				break;
 		}
 	}
 }

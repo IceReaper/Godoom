@@ -7,73 +7,71 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ManagedDoom.Doom.Event;
+using ManagedDoom.UserInput;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Menu;
+
+public sealed class TextInput
 {
-	public sealed class TextInput
+	private List<char> text;
+	private Action<IReadOnlyList<char>> typed;
+	private Action<IReadOnlyList<char>> finished;
+	private Action canceled;
+
+	private TextInputState state;
+
+	public TextInput(
+		IReadOnlyList<char> initialText,
+		Action<IReadOnlyList<char>> typed,
+		Action<IReadOnlyList<char>> finished,
+		Action canceled)
 	{
-		private List<char> text;
-		private Action<IReadOnlyList<char>> typed;
-		private Action<IReadOnlyList<char>> finished;
-		private Action canceled;
+		this.text = initialText.ToList();
+		this.typed = typed;
+		this.finished = finished;
+		this.canceled = canceled;
 
-		private TextInputState state;
+		state = TextInputState.Typing;
+	}
 
-		public TextInput(
-			IReadOnlyList<char> initialText,
-			Action<IReadOnlyList<char>> typed,
-			Action<IReadOnlyList<char>> finished,
-			Action canceled)
+	public bool DoEvent(DoomEvent e)
+	{
+		var ch = e.Key.GetChar();
+		if (ch != 0)
 		{
-			this.text = initialText.ToList();
-			this.typed = typed;
-			this.finished = finished;
-			this.canceled = canceled;
-
-			state = TextInputState.Typing;
-		}
-
-		public bool DoEvent(DoomEvent e)
-		{
-			var ch = e.Key.GetChar();
-			if (ch != 0)
-			{
-				text.Add(ch);
-				typed(text);
-				return true;
-			}
-
-			if (e.Key == DoomKey.Backspace && e.Type == EventType.KeyDown)
-			{
-				if (text.Count > 0)
-				{
-					text.RemoveAt(text.Count - 1);
-				}
-				typed(text);
-				return true;
-			}
-
-			if (e.Key == DoomKey.Enter && e.Type == EventType.KeyDown)
-			{
-				finished(text);
-				state = TextInputState.Finished;
-				return true;
-			}
-
-			if (e.Key == DoomKey.Escape && e.Type == EventType.KeyDown)
-			{
-				canceled();
-				state = TextInputState.Canceled;
-				return true;
-			}
-
+			text.Add(ch);
+			typed(text);
 			return true;
 		}
 
-		public IReadOnlyList<char> Text => text;
-		public TextInputState State => state;
+		if (e.Key == DoomKey.Backspace && e.Type == EventType.KeyDown)
+		{
+			if (text.Count > 0)
+			{
+				text.RemoveAt(text.Count - 1);
+			}
+			typed(text);
+			return true;
+		}
+
+		if (e.Key == DoomKey.Enter && e.Type == EventType.KeyDown)
+		{
+			finished(text);
+			state = TextInputState.Finished;
+			return true;
+		}
+
+		if (e.Key == DoomKey.Escape && e.Type == EventType.KeyDown)
+		{
+			canceled();
+			state = TextInputState.Canceled;
+			return true;
+		}
+
+		return true;
 	}
+
+	public IReadOnlyList<char> Text => text;
+	public TextInputState State => state;
 }

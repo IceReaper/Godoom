@@ -7,44 +7,41 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public class Thinker
 {
-	public class Thinker
+	private Thinker prev;
+	private Thinker next;
+	private ThinkerState thinkerState;
+
+	public Thinker()
 	{
-		private Thinker prev;
-		private Thinker next;
-		private ThinkerState thinkerState;
+	}
 
-		public Thinker()
-		{
-		}
+	public virtual void Run()
+	{
+	}
 
-		public virtual void Run()
-		{
-		}
+	public virtual void UpdateFrameInterpolationInfo()
+	{
+	}
 
-		public virtual void UpdateFrameInterpolationInfo()
-		{
-		}
+	public Thinker Prev
+	{
+		get => prev;
+		set => prev = value;
+	}
 
-		public Thinker Prev
-		{
-			get => prev;
-			set => prev = value;
-		}
+	public Thinker Next
+	{
+		get => next;
+		set => next = value;
+	}
 
-		public Thinker Next
-		{
-			get => next;
-			set => next = value;
-		}
-
-		public ThinkerState ThinkerState
-		{
-			get => thinkerState;
-			set => thinkerState = value;
-		}
+	public ThinkerState ThinkerState
+	{
+		get => thinkerState;
+		set => thinkerState = value;
 	}
 }

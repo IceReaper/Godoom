@@ -7,61 +7,59 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+using ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Intermission;
+
+public class PlayerScores
 {
-	public class PlayerScores
+	// Whether the player is in game.
+	private bool inGame;
+
+	// Player stats, kills, collected items etc.
+	private int killCount;
+	private int itemCount;
+	private int secretCount;
+	private int time;
+	private int[] frags;
+
+	public PlayerScores()
 	{
-		// Whether the player is in game.
-		private bool inGame;
+		frags = new int[Player.MaxPlayerCount];
+	}
 
-		// Player stats, kills, collected items etc.
-		private int killCount;
-		private int itemCount;
-		private int secretCount;
-		private int time;
-		private int[] frags;
+	public bool InGame
+	{
+		get => inGame;
+		set => inGame = value;
+	}
 
-		public PlayerScores()
-		{
-			frags = new int[Player.MaxPlayerCount];
-		}
+	public int KillCount
+	{
+		get => killCount;
+		set => killCount = value;
+	}
 
-		public bool InGame
-		{
-			get => inGame;
-			set => inGame = value;
-		}
+	public int ItemCount
+	{
+		get => itemCount;
+		set => itemCount = value;
+	}
 
-		public int KillCount
-		{
-			get => killCount;
-			set => killCount = value;
-		}
+	public int SecretCount
+	{
+		get => secretCount;
+		set => secretCount = value;
+	}
 
-		public int ItemCount
-		{
-			get => itemCount;
-			set => itemCount = value;
-		}
+	public int Time
+	{
+		get => time;
+		set => time = value;
+	}
 
-		public int SecretCount
-		{
-			get => secretCount;
-			set => secretCount = value;
-		}
-
-		public int Time
-		{
-			get => time;
-			set => time = value;
-		}
-
-		public int[] Frags
-		{
-			get => frags;
-		}
+	public int[] Frags
+	{
+		get => frags;
 	}
 }

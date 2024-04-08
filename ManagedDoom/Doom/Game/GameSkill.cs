@@ -7,16 +7,13 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+public enum GameSkill
 {
-	public enum GameSkill
-	{
-		Baby,
-		Easy,
-		Medium,
-		Hard,
-		Nightmare
-	}
+	Baby,
+	Easy,
+	Medium,
+	Hard,
+	Nightmare
 }

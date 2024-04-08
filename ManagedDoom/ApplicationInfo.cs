@@ -7,12 +7,9 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom;
 
-namespace ManagedDoom
+public static class ApplicationInfo
 {
-	public static class ApplicationInfo
-	{
-		public static readonly string Title = "Managed Doom v2.1a";
-	}
+	public static readonly string Title = "Managed Doom v2.1a";
 }

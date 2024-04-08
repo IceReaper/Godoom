@@ -7,248 +7,248 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Audio;
+using ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Opening;
+
+public sealed class OpeningSequence
 {
-	public sealed class OpeningSequence
+	private GameContent content;
+	private GameOptions options;
+
+	private OpeningSequenceState state;
+
+	private int currentStage;
+	private int nextStage;
+
+	private int count;
+	private int timer;
+
+	private TicCmd[] cmds;
+	private Demo demo;
+	private DoomGame game;
+
+	private bool reset;
+
+	public OpeningSequence(GameContent content, GameOptions options)
 	{
-		private GameContent content;
-		private GameOptions options;
+		this.content = content;
+		this.options = options;
 
-		private OpeningSequenceState state;
-
-		private int currentStage;
-		private int nextStage;
-
-		private int count;
-		private int timer;
-
-		private TicCmd[] cmds;
-		private Demo demo;
-		private DoomGame game;
-
-		private bool reset;
-
-		public OpeningSequence(GameContent content, GameOptions options)
+		cmds = new TicCmd[Player.MaxPlayerCount];
+		for (var i = 0; i < Player.MaxPlayerCount; i++)
 		{
-			this.content = content;
-			this.options = options;
-
-			cmds = new TicCmd[Player.MaxPlayerCount];
-			for (var i = 0; i < Player.MaxPlayerCount; i++)
-			{
-				cmds[i] = new TicCmd();
-			}
-
-			currentStage = 0;
-			nextStage = 0;
-
-			reset = false;
-
-			StartTitleScreen();
+			cmds[i] = new TicCmd();
 		}
 
-		public void Reset()
+		currentStage = 0;
+		nextStage = 0;
+
+		reset = false;
+
+		StartTitleScreen();
+	}
+
+	public void Reset()
+	{
+		currentStage = 0;
+		nextStage = 0;
+
+		demo = null;
+		game = null;
+
+		reset = true;
+
+		StartTitleScreen();
+	}
+
+	public UpdateResult Update()
+	{
+		var updateResult = UpdateResult.None;
+
+		if (nextStage != currentStage)
 		{
-			currentStage = 0;
-			nextStage = 0;
-
-			demo = null;
-			game = null;
-
-			reset = true;
-
-			StartTitleScreen();
-		}
-
-		public UpdateResult Update()
-		{
-			var updateResult = UpdateResult.None;
-
-			if (nextStage != currentStage)
-			{
-				switch (nextStage)
-				{
-					case 0:
-						StartTitleScreen();
-						break;
-					case 1:
-						StartDemo("DEMO1");
-						break;
-					case 2:
-						StartCreditScreen();
-						break;
-					case 3:
-						StartDemo("DEMO2");
-						break;
-					case 4:
-						StartTitleScreen();
-						break;
-					case 5:
-						StartDemo("DEMO3");
-						break;
-					case 6:
-						StartCreditScreen();
-						break;
-					case 7:
-						StartDemo("DEMO4");
-						break;
-				}
-
-				currentStage = nextStage;
-				updateResult = UpdateResult.NeedWipe;
-			}
-
-			switch (currentStage)
+			switch (nextStage)
 			{
 				case 0:
-					count++;
-					if (count == timer)
-					{
-						nextStage = 1;
-					}
+					StartTitleScreen();
 					break;
-
 				case 1:
-					if (!demo.ReadCmd(cmds))
-					{
-						nextStage = 2;
-					}
-					else
-					{
-						game.Update(cmds);
-					}
+					StartDemo("DEMO1");
 					break;
-
 				case 2:
-					count++;
-					if (count == timer)
-					{
-						nextStage = 3;
-					}
+					StartCreditScreen();
 					break;
-
 				case 3:
-					if (!demo.ReadCmd(cmds))
-					{
-						nextStage = 4;
-					}
-					else
-					{
-						game.Update(cmds);
-					}
+					StartDemo("DEMO2");
 					break;
-
 				case 4:
-					count++;
-					if (count == timer)
-					{
-						nextStage = 5;
-					}
+					StartTitleScreen();
 					break;
-
 				case 5:
-					if (!demo.ReadCmd(cmds))
-					{
-						if (content.Wad.GetLumpNumber("DEMO4") == -1)
-						{
-							nextStage = 0;
-						}
-						else
-						{
-							nextStage = 6;
-						}
-					}
-					else
-					{
-						game.Update(cmds);
-					}
+					StartDemo("DEMO3");
 					break;
-
 				case 6:
-					count++;
-					if (count == timer)
-					{
-						nextStage = 7;
-					}
+					StartCreditScreen();
 					break;
-
 				case 7:
-					if (!demo.ReadCmd(cmds))
+					StartDemo("DEMO4");
+					break;
+			}
+
+			currentStage = nextStage;
+			updateResult = UpdateResult.NeedWipe;
+		}
+
+		switch (currentStage)
+		{
+			case 0:
+				count++;
+				if (count == timer)
+				{
+					nextStage = 1;
+				}
+				break;
+
+			case 1:
+				if (!demo.ReadCmd(cmds))
+				{
+					nextStage = 2;
+				}
+				else
+				{
+					game.Update(cmds);
+				}
+				break;
+
+			case 2:
+				count++;
+				if (count == timer)
+				{
+					nextStage = 3;
+				}
+				break;
+
+			case 3:
+				if (!demo.ReadCmd(cmds))
+				{
+					nextStage = 4;
+				}
+				else
+				{
+					game.Update(cmds);
+				}
+				break;
+
+			case 4:
+				count++;
+				if (count == timer)
+				{
+					nextStage = 5;
+				}
+				break;
+
+			case 5:
+				if (!demo.ReadCmd(cmds))
+				{
+					if (content.Wad.GetLumpNumber("DEMO4") == -1)
 					{
 						nextStage = 0;
 					}
 					else
 					{
-						game.Update(cmds);
+						nextStage = 6;
 					}
-					break;
-			}
-
-			if (state == OpeningSequenceState.Title && count == 1)
-			{
-				if (options.GameMode == GameMode.Commercial)
-				{
-					options.Music.StartMusic(Bgm.DM2TTL, false);
 				}
 				else
 				{
-					options.Music.StartMusic(Bgm.INTRO, false);
+					game.Update(cmds);
 				}
-			}
+				break;
 
-			if (reset)
-			{
-				reset = false;
-				return UpdateResult.NeedWipe;
-			}
-			else
-			{
-				return updateResult;
-			}
+			case 6:
+				count++;
+				if (count == timer)
+				{
+					nextStage = 7;
+				}
+				break;
+
+			case 7:
+				if (!demo.ReadCmd(cmds))
+				{
+					nextStage = 0;
+				}
+				else
+				{
+					game.Update(cmds);
+				}
+				break;
 		}
 
-		private void StartTitleScreen()
+		if (state == OpeningSequenceState.Title && count == 1)
 		{
-			state = OpeningSequenceState.Title;
-
-			count = 0;
 			if (options.GameMode == GameMode.Commercial)
 			{
-				timer = 35 * 11;
+				options.Music.StartMusic(Bgm.DM2TTL, false);
 			}
 			else
 			{
-				timer = 170;
+				options.Music.StartMusic(Bgm.INTRO, false);
 			}
 		}
 
-		private void StartCreditScreen()
+		if (reset)
 		{
-			state = OpeningSequenceState.Credit;
-
-			count = 0;
-			timer = 200;
+			reset = false;
+			return UpdateResult.NeedWipe;
 		}
-
-		private void StartDemo(string lump)
+		else
 		{
-			state = OpeningSequenceState.Demo;
-
-			demo = new Demo(content.Wad.ReadLump(lump));
-			demo.Options.GameVersion = options.GameVersion;
-			demo.Options.GameMode = options.GameMode;
-			demo.Options.MissionPack = options.MissionPack;
-			demo.Options.Video = options.Video;
-			demo.Options.Sound = options.Sound;
-			demo.Options.Music = options.Music;
-
-			game = new DoomGame(content, demo.Options);
-			game.DeferedInitNew();
+			return updateResult;
 		}
-
-		public OpeningSequenceState State => state;
-		public DoomGame DemoGame => game;
 	}
+
+	private void StartTitleScreen()
+	{
+		state = OpeningSequenceState.Title;
+
+		count = 0;
+		if (options.GameMode == GameMode.Commercial)
+		{
+			timer = 35 * 11;
+		}
+		else
+		{
+			timer = 170;
+		}
+	}
+
+	private void StartCreditScreen()
+	{
+		state = OpeningSequenceState.Credit;
+
+		count = 0;
+		timer = 200;
+	}
+
+	private void StartDemo(string lump)
+	{
+		state = OpeningSequenceState.Demo;
+
+		demo = new Demo(content.Wad.ReadLump(lump));
+		demo.Options.GameVersion = options.GameVersion;
+		demo.Options.GameMode = options.GameMode;
+		demo.Options.MissionPack = options.MissionPack;
+		demo.Options.Video = options.Video;
+		demo.Options.Sound = options.Sound;
+		demo.Options.Music = options.Music;
+
+		game = new DoomGame(content, demo.Options);
+		game.DeferedInitNew();
+	}
+
+	public OpeningSequenceState State => state;
+	public DoomGame DemoGame => game;
 }

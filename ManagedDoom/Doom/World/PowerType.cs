@@ -7,19 +7,16 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum PowerType
 {
-	public enum PowerType
-	{
-		Invulnerability,
-		Strength,
-		Invisibility,
-		IronFeet,
-		AllMap,
-		Infrared,
+	Invulnerability,
+	Strength,
+	Invisibility,
+	IronFeet,
+	AllMap,
+	Infrared,
 
-		Count
-	}
+	Count
 }

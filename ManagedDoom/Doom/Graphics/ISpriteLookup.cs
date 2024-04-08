@@ -7,13 +7,9 @@
  * information, see COPYING.
  */
 
-using System;
-using System.Collections.Generic;
+namespace ManagedDoom.Doom.Graphics;
 
-namespace ManagedDoom
+public interface ISpriteLookup
 {
-	public interface ISpriteLookup
-	{
-		public SpriteDef this[Sprite sprite] { get; }
-	}
+	public SpriteDef this[Sprite sprite] { get; }
 }

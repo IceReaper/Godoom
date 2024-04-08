@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Intermission;
 
-namespace ManagedDoom
+public enum AnimationType
 {
-	public enum AnimationType
-	{
-		Always,
-		Random,
-		Level
-	}
+	Always,
+	Random,
+	Level
 }

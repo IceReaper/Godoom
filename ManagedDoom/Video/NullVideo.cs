@@ -7,78 +7,77 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Math;
 
-namespace ManagedDoom.Video
+namespace ManagedDoom.Video;
+
+public class NullVideo : IVideo
 {
-	public class NullVideo : IVideo
+	private static NullVideo instance;
+
+	public static NullVideo GetInstance()
 	{
-		private static NullVideo instance;
-
-		public static NullVideo GetInstance()
+		if (instance == null)
 		{
-			if (instance == null)
-			{
-				instance = new NullVideo();
-			}
-
-			return instance;
+			instance = new NullVideo();
 		}
 
-		public void Render(Doom doom, Fixed frameFrac)
+		return instance;
+	}
+
+	public void Render(Doom.Doom doom, Fixed frameFrac)
+	{
+	}
+
+	public void InitializeWipe()
+	{
+	}
+
+	public bool HasFocus()
+	{
+		return true;
+	}
+
+	public int MaxWindowSize => ThreeDRenderer.MaxScreenSize;
+
+	public int WindowSize
+	{
+		get
 		{
+			return 7;
 		}
 
-		public void InitializeWipe()
+		set
 		{
 		}
+	}
 
-		public bool HasFocus()
+	public bool DisplayMessage
+	{
+		get
 		{
 			return true;
 		}
 
-		public int MaxWindowSize => ThreeDRenderer.MaxScreenSize;
-
-		public int WindowSize
+		set
 		{
-			get
-			{
-				return 7;
-			}
-
-			set
-			{
-			}
 		}
-
-		public bool DisplayMessage
-		{
-			get
-			{
-				return true;
-			}
-
-			set
-			{
-			}
-		}
-
-		public int MaxGammaCorrectionLevel => 10;
-
-		public int GammaCorrectionLevel
-		{
-			get
-			{
-				return 2;
-			}
-
-			set
-			{
-			}
-		}
-
-		public int WipeBandCount => 321;
-		public int WipeHeight => 200;
 	}
+
+	public int MaxGammaCorrectionLevel => 10;
+
+	public int GammaCorrectionLevel
+	{
+		get
+		{
+			return 2;
+		}
+
+		set
+		{
+		}
+	}
+
+	public int WipeBandCount => 321;
+	public int WipeHeight => 200;
 }

@@ -7,44 +7,41 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+public sealed class Reject
 {
-	public sealed class Reject
+	private byte[] data;
+	private int sectorCount;
+
+	private Reject(byte[] data, int sectorCount)
 	{
-		private byte[] data;
-		private int sectorCount;
-
-		private Reject(byte[] data, int sectorCount)
+		// If the reject table is too small, expand it to avoid crash.
+		// https://doomwiki.org/wiki/Reject#Reject_Overflow
+		var expectedLength = (sectorCount * sectorCount + 7) / 8;
+		if (data.Length < expectedLength)
 		{
-			// If the reject table is too small, expand it to avoid crash.
-			// https://doomwiki.org/wiki/Reject#Reject_Overflow
-			var expectedLength = (sectorCount * sectorCount + 7) / 8;
-			if (data.Length < expectedLength)
-			{
-				Array.Resize(ref data, expectedLength);
-			}
-
-			this.data = data;
-			this.sectorCount = sectorCount;
+			Array.Resize(ref data, expectedLength);
 		}
 
-		public static Reject FromWad(Wad wad, int lump, Sector[] sectors)
-		{
-			return new Reject(wad.ReadLump(lump), sectors.Length);
-		}
+		this.data = data;
+		this.sectorCount = sectorCount;
+	}
 
-		public bool Check(Sector sector1, Sector sector2)
-		{
-			var s1 = sector1.Number;
-			var s2 = sector2.Number;
+	public static Reject FromWad(Wad.Wad wad, int lump, Sector[] sectors)
+	{
+		return new Reject(wad.ReadLump(lump), sectors.Length);
+	}
 
-			var p = s1 * sectorCount + s2;
-			var byteIndex = p >> 3;
-			var bitIndex = 1 << (p & 7);
+	public bool Check(Sector sector1, Sector sector2)
+	{
+		var s1 = sector1.Number;
+		var s2 = sector2.Number;
 
-			return (data[byteIndex] & bitIndex) != 0;
-		}
+		var p = s1 * sectorCount + s2;
+		var byteIndex = p >> 3;
+		var bitIndex = 1 << (p & 7);
+
+		return (data[byteIndex] & bitIndex) != 0;
 	}
 }

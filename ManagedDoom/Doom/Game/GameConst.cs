@@ -7,16 +7,15 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Math;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.Game;
+
+public static class GameConst
 {
-	public static class GameConst
-	{
-		public static readonly int TicRate = 35;
+	public static readonly int TicRate = 35;
 
-		public static readonly Fixed MaxThingRadius = Fixed.FromInt(32);
+	public static readonly Fixed MaxThingRadius = Fixed.FromInt(32);
 
-		public static readonly int TurboThreshold = 0x32;
-	}
+	public static readonly int TurboThreshold = 0x32;
 }

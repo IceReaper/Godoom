@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.Game;
 
-namespace ManagedDoom
+public enum MissionPack
 {
-	public enum MissionPack
-	{
-		Doom2,
-		Plutonia,
-		Tnt
-	}
+	Doom2,
+	Plutonia,
+	Tnt
 }

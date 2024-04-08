@@ -7,55 +7,54 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.World;
+
+public sealed class Button
 {
-	public sealed class Button
+	private LineDef line;
+	private ButtonPosition position;
+	private int texture;
+	private int timer;
+	private Mobj soundOrigin;
+
+	public void Clear()
 	{
-		private LineDef line;
-		private ButtonPosition position;
-		private int texture;
-		private int timer;
-		private Mobj soundOrigin;
+		line = null;
+		position = 0;
+		texture = 0;
+		timer = 0;
+		soundOrigin = null;
+	}
 
-		public void Clear()
-		{
-			line = null;
-			position = 0;
-			texture = 0;
-			timer = 0;
-			soundOrigin = null;
-		}
+	public LineDef Line
+	{
+		get => line;
+		set => line = value;
+	}
 
-		public LineDef Line
-		{
-			get => line;
-			set => line = value;
-		}
+	public ButtonPosition Position
+	{
+		get => position;
+		set => position = value;
+	}
 
-		public ButtonPosition Position
-		{
-			get => position;
-			set => position = value;
-		}
+	public int Texture
+	{
+		get => texture;
+		set => texture = value;
+	}
 
-		public int Texture
-		{
-			get => texture;
-			set => texture = value;
-		}
+	public int Timer
+	{
+		get => timer;
+		set => timer = value;
+	}
 
-		public int Timer
-		{
-			get => timer;
-			set => timer = value;
-		}
-
-		public Mobj SoundOrigin
-		{
-			get => soundOrigin;
-			set => soundOrigin = value;
-		}
+	public Mobj SoundOrigin
+	{
+		get => soundOrigin;
+		set => soundOrigin = value;
 	}
 }

@@ -10,6 +10,12 @@
 using Godot;
 using ManagedDoom;
 using ManagedDoom.Audio;
+using ManagedDoom.Doom.Common;
+using ManagedDoom.Doom.Game;
+using ManagedDoom.Doom.Info;
+using ManagedDoom.Doom.Math;
+using ManagedDoom.Doom.Wad;
+using ManagedDoom.Doom.World;
 using System.Globalization;
 using Node = Godot.Node;
 

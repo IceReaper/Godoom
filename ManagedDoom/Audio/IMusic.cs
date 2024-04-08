@@ -7,15 +7,12 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Audio;
 
-namespace ManagedDoom.Audio
+public interface IMusic
 {
-	public interface IMusic
-	{
-		void StartMusic(Bgm bgm, bool loop);
+	void StartMusic(Bgm bgm, bool loop);
 
-		public int MaxVolume { get; }
-		public int Volume { get; set; }
-	}
+	public int MaxVolume { get; }
+	public int Volume { get; set; }
 }

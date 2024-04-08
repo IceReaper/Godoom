@@ -7,14 +7,11 @@
  * information, see COPYING.
  */
 
-using System;
+namespace ManagedDoom.Doom.World;
 
-namespace ManagedDoom
+public enum PlayerSprite
 {
-	public enum PlayerSprite
-	{
-		Weapon,
-		Flash,
-		Count
-	}
+	Weapon,
+	Flash,
+	Count
 }

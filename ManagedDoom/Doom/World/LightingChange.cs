@@ -7,131 +7,130 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Map;
 
-namespace ManagedDoom
+namespace ManagedDoom.Doom.World;
+
+public sealed class LightingChange
 {
-	public sealed class LightingChange
+	private World world;
+
+	public LightingChange(World world)
 	{
-		private World world;
+		this.world = world;
+	}
 
-		public LightingChange(World world)
+	public void SpawnFireFlicker(Sector sector)
+	{
+		// Note that we are resetting sector attributes.
+		// Nothing special about it during gameplay.
+		sector.Special = 0;
+
+		var flicker = new FireFlicker(world);
+
+		world.Thinkers.Add(flicker);
+
+		flicker.Sector = sector;
+		flicker.MaxLight = sector.LightLevel;
+		flicker.MinLight = FindMinSurroundingLight(sector, sector.LightLevel) + 16;
+		flicker.Count = 4;
+	}
+
+	public void SpawnLightFlash(Sector sector)
+	{
+		// Nothing special about it during gameplay.
+		sector.Special = 0;
+
+		var light = new LightFlash(world);
+
+		world.Thinkers.Add(light);
+
+		light.Sector = sector;
+		light.MaxLight = sector.LightLevel;
+
+		light.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
+		light.MaxTime = 64;
+		light.MinTime = 7;
+		light.Count = (world.Random.Next() & light.MaxTime) + 1;
+	}
+
+	public void SpawnStrobeFlash(Sector sector, int time, bool inSync)
+	{
+		var strobe = new StrobeFlash(world);
+
+		world.Thinkers.Add(strobe);
+
+		strobe.Sector = sector;
+		strobe.DarkTime = time;
+		strobe.BrightTime = StrobeFlash.StrobeBright;
+		strobe.MaxLight = sector.LightLevel;
+		strobe.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
+
+		if (strobe.MinLight == strobe.MaxLight)
 		{
-			this.world = world;
+			strobe.MinLight = 0;
 		}
 
-		public void SpawnFireFlicker(Sector sector)
+		// Nothing special about it during gameplay.
+		sector.Special = 0;
+
+		if (inSync)
 		{
-			// Note that we are resetting sector attributes.
-			// Nothing special about it during gameplay.
-			sector.Special = 0;
-
-			var flicker = new FireFlicker(world);
-
-			world.Thinkers.Add(flicker);
-
-			flicker.Sector = sector;
-			flicker.MaxLight = sector.LightLevel;
-			flicker.MinLight = FindMinSurroundingLight(sector, sector.LightLevel) + 16;
-			flicker.Count = 4;
+			strobe.Count = 1;
 		}
-
-		public void SpawnLightFlash(Sector sector)
+		else
 		{
-			// Nothing special about it during gameplay.
-			sector.Special = 0;
-
-			var light = new LightFlash(world);
-
-			world.Thinkers.Add(light);
-
-			light.Sector = sector;
-			light.MaxLight = sector.LightLevel;
-
-			light.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
-			light.MaxTime = 64;
-			light.MinTime = 7;
-			light.Count = (world.Random.Next() & light.MaxTime) + 1;
+			strobe.Count = (world.Random.Next() & 7) + 1;
 		}
+	}
 
-		public void SpawnStrobeFlash(Sector sector, int time, bool inSync)
+	public void SpawnGlowingLight(Sector sector)
+	{
+		var glowing = new GlowingLight(world);
+
+		world.Thinkers.Add(glowing);
+
+		glowing.Sector = sector;
+		glowing.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
+		glowing.MaxLight = sector.LightLevel;
+		glowing.Direction = -1;
+
+		sector.Special = 0;
+	}
+
+	private int FindMinSurroundingLight(Sector sector, int max)
+	{
+		var min = max;
+		for (var i = 0; i < sector.Lines.Length; i++)
 		{
-			var strobe = new StrobeFlash(world);
+			var line = sector.Lines[i];
+			var check = GetNextSector(line, sector);
 
-			world.Thinkers.Add(strobe);
-
-			strobe.Sector = sector;
-			strobe.DarkTime = time;
-			strobe.BrightTime = StrobeFlash.StrobeBright;
-			strobe.MaxLight = sector.LightLevel;
-			strobe.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
-
-			if (strobe.MinLight == strobe.MaxLight)
+			if (check == null)
 			{
-				strobe.MinLight = 0;
+				continue;
 			}
 
-			// Nothing special about it during gameplay.
-			sector.Special = 0;
-
-			if (inSync)
+			if (check.LightLevel < min)
 			{
-				strobe.Count = 1;
-			}
-			else
-			{
-				strobe.Count = (world.Random.Next() & 7) + 1;
+				min = check.LightLevel;
 			}
 		}
+		return min;
+	}
 
-		public void SpawnGlowingLight(Sector sector)
+	private Sector GetNextSector(LineDef line, Sector sector)
+	{
+		if ((line.Flags & LineFlags.TwoSided) == 0)
 		{
-			var glowing = new GlowingLight(world);
-
-			world.Thinkers.Add(glowing);
-
-			glowing.Sector = sector;
-			glowing.MinLight = FindMinSurroundingLight(sector, sector.LightLevel);
-			glowing.MaxLight = sector.LightLevel;
-			glowing.Direction = -1;
-
-			sector.Special = 0;
+			return null;
 		}
 
-		private int FindMinSurroundingLight(Sector sector, int max)
+		if (line.FrontSector == sector)
 		{
-			var min = max;
-			for (var i = 0; i < sector.Lines.Length; i++)
-			{
-				var line = sector.Lines[i];
-				var check = GetNextSector(line, sector);
-
-				if (check == null)
-				{
-					continue;
-				}
-
-				if (check.LightLevel < min)
-				{
-					min = check.LightLevel;
-				}
-			}
-			return min;
+			return line.BackSector;
 		}
 
-		private Sector GetNextSector(LineDef line, Sector sector)
-		{
-			if ((line.Flags & LineFlags.TwoSided) == 0)
-			{
-				return null;
-			}
-
-			if (line.FrontSector == sector)
-			{
-				return line.BackSector;
-			}
-
-			return line.FrontSector;
-		}
+		return line.FrontSector;
 	}
 }

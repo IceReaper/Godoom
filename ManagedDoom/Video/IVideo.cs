@@ -7,25 +7,24 @@
  * information, see COPYING.
  */
 
-using System;
+using ManagedDoom.Doom.Math;
 
-namespace ManagedDoom.Video
+namespace ManagedDoom.Video;
+
+public interface IVideo
 {
-	public interface IVideo
-	{
-		public void Render(Doom doom, Fixed frameFrac);
-		public void InitializeWipe();
-		public bool HasFocus();
+	public void Render(Doom.Doom doom, Fixed frameFrac);
+	public void InitializeWipe();
+	public bool HasFocus();
 
-		public int MaxWindowSize { get; }
-		public int WindowSize { get; set; }
+	public int MaxWindowSize { get; }
+	public int WindowSize { get; set; }
 
-		public bool DisplayMessage { get; set; }
+	public bool DisplayMessage { get; set; }
 
-		public int MaxGammaCorrectionLevel { get; }
-		public int GammaCorrectionLevel { get; set; }
+	public int MaxGammaCorrectionLevel { get; }
+	public int GammaCorrectionLevel { get; set; }
 
-		public int WipeBandCount { get; }
-		public int WipeHeight { get; }
-	}
+	public int WipeBandCount { get; }
+	public int WipeHeight { get; }
 }
