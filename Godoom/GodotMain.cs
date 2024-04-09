@@ -18,9 +18,6 @@ public partial class GodotMain : Node3D
 
 	public override void _Ready()
 	{
-		// TODO this is required for the positional audio. We should refactor this into the game code!
-		AddChild(new Camera3D { Current = true });
-
 		_app = new GodotDoom(new CommandLineArgs(OS.GetCmdlineArgs()), GetWindow(), this);
 	}
 

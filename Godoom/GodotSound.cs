@@ -13,7 +13,6 @@ using ManagedDoom.Audio;
 using ManagedDoom.Doom.Common;
 using ManagedDoom.Doom.Game;
 using ManagedDoom.Doom.Info;
-using ManagedDoom.Doom.Math;
 using ManagedDoom.Doom.Wad;
 using ManagedDoom.Doom.World;
 using ManagedDoom.Platform;
@@ -24,41 +23,24 @@ namespace Godoom;
 
 public sealed class GodotSound : ISound, IDisposable
 {
-	private sealed class ChannelInfo
+	private sealed class AudioInfo
 	{
-		public Sfx Reserved;
-		public Sfx Playing;
-		public float Priority;
 		public Mobj? Source;
-		public SfxType Type;
+		public Sfx Sound;
 		public int Volume;
-		public Fixed LastX;
-		public Fixed LastY;
 	}
 
-	private const int ChannelCount = 8;
-
 	private const float ClipDist = 1200;
-	private const float CloseDist = 160;
-	private const float Attenuator = ClipDist - CloseDist;
-
-	private static readonly float FastDecay = (float)Math.Pow(0.5, 1.0 / 7);
-	private static readonly float SlowDecay = (float)Math.Pow(0.5, 1.0 / 35);
 
 	private readonly Config _config;
+	private readonly Node _node;
 
 	private readonly AudioStreamWav?[] _buffers = new AudioStreamWav?[DoomInfo.SfxNames.Length];
 	private readonly float[] _amplitudes = new float[DoomInfo.SfxNames.Length];
 
 	private readonly DoomRandom? _random;
 
-	private readonly AudioStreamPlayer3D[] _channels;
-	private readonly ChannelInfo[] _infos;
-
-	private readonly AudioStreamPlayer _uiChannel;
-	private Sfx _uiReserved;
-
-	private Mobj? _listener;
+	private readonly Dictionary<Node, AudioInfo> _soundPlayers = [];
 
 	private float _masterVolumeDecay;
 
@@ -80,6 +62,7 @@ public sealed class GodotSound : ISound, IDisposable
 	public GodotSound(Config config, GameContent content, Node node)
 	{
 		_config = config;
+		_node = node;
 
 		config.AudioSoundVolume = Math.Clamp(config.AudioSoundVolume, 0, MaxVolume);
 
@@ -101,20 +84,6 @@ public sealed class GodotSound : ISound, IDisposable
 			_buffers[i] = new AudioStreamWav { Format = AudioStreamWav.FormatEnum.Format8Bits, Stereo = false, MixRate = sampleRate, Data = samples };
 			_amplitudes[i] = GetAmplitude(samples, sampleRate, sampleCount);
 		}
-
-		_channels = new AudioStreamPlayer3D[ChannelCount];
-		_infos = new ChannelInfo[ChannelCount];
-
-		for (var i = 0; i < _channels.Length; i++)
-		{
-			_channels[i] = new AudioStreamPlayer3D { AttenuationModel = AudioStreamPlayer3D.AttenuationModelEnum.Disabled };
-			_infos[i] = new ChannelInfo();
-
-			node.AddChild(_channels[i]);
-		}
-
-		_uiChannel = new AudioStreamPlayer();
-		node.AddChild(_uiChannel);
 
 		_masterVolumeDecay = (float)config.AudioSoundVolume / MaxVolume;
 	}
@@ -192,11 +161,6 @@ public sealed class GodotSound : ISound, IDisposable
 		return (float)max / 128;
 	}
 
-	public void SetListener(Mobj listener)
-	{
-		_listener = listener;
-	}
-
 	public void Update()
 	{
 		var now = DateTime.Now;
@@ -204,62 +168,25 @@ public sealed class GodotSound : ISound, IDisposable
 		if ((now - _lastUpdate).TotalSeconds < 0.01)
 			return;
 
-		for (var i = 0; i < _infos.Length; i++)
-		{
-			var info = _infos[i];
-			var channel = _channels[i];
-
-			if (info.Playing != Sfx.NONE)
-			{
-				if (channel.Playing)
-				{
-					info.Priority *= info.Type == SfxType.Diffuse ? SlowDecay : FastDecay;
-
-					SetParam(channel, info);
-				}
-				else
-				{
-					info.Playing = Sfx.NONE;
-
-					if (info.Reserved == Sfx.NONE)
-						info.Source = null;
-				}
-			}
-
-			if (info.Reserved == Sfx.NONE)
-				continue;
-
-			if (info.Playing != Sfx.NONE)
-				channel.Stop();
-
-			channel.Stream = _buffers[(int)info.Reserved];
-
-			SetParam(channel, info);
-
-			channel.PitchScale = GetPitch(info.Type, info.Reserved);
-			channel.Play();
-
-			info.Playing = info.Reserved;
-			info.Reserved = Sfx.NONE;
-		}
-
-		if (_uiReserved != Sfx.NONE)
-		{
-			_uiChannel.Stop();
-
-			_uiChannel.VolumeDb = Linear2Db(_masterVolumeDecay);
-			_uiChannel.Stream = _buffers[(int)_uiReserved];
-			_uiChannel.Play();
-
-			_uiReserved = Sfx.NONE;
-		}
+		foreach (var (player, info) in _soundPlayers)
+			SetParam(player, info);
 
 		_lastUpdate = now;
 	}
 
 	public void StartSound(Sfx sfx)
 	{
-		_uiReserved = sfx;
+		var player = new AudioStreamPlayer
+		{
+			Autoplay = true, VolumeDb = Linear2Db(_masterVolumeDecay), Stream = _buffers[(int)sfx], PitchScale = GetPitch(SfxType.Diffuse, sfx)
+		};
+
+		player.Finished += () =>
+		{
+			player.Dispose();
+		};
+
+		_node.AddChild(player);
 	}
 
 	public void StartSound(Mobj mobj, Sfx sfx, SfxType type)
@@ -269,31 +196,69 @@ public sealed class GodotSound : ISound, IDisposable
 
 	public void StartSound(Mobj mobj, Sfx sfx, SfxType type, int volume)
 	{
-		var x = (mobj.X - (_listener?.X ?? Fixed.Zero)).ToFloat();
-		var y = (mobj.Y - (_listener?.Y ?? Fixed.Zero)).ToFloat();
-		var dist = MathF.Sqrt(x * x + y * y);
+		foreach (var (node, info) in _soundPlayers)
+		{
+			if (info.Source != mobj || info.Sound != sfx)
+				continue;
 
-		var priority = type == SfxType.Diffuse ? volume : _amplitudes[(int)sfx] * GetDistanceDecay(dist) * volume;
+			(node as AudioStreamPlayer)?.Play();
+			(node as AudioStreamPlayer3D)?.Play();
 
-		var info = _infos.FirstOrDefault(info => info.Source == mobj && info.Type == type)
-			?? _infos.FirstOrDefault(static info => info is { Reserved: Sfx.NONE, Playing: Sfx.NONE }) ?? _infos.OrderBy(static info => info.Priority).First();
+			return;
+		}
 
-		info.Reserved = sfx;
-		info.Priority = priority;
-		info.Source = mobj;
-		info.Type = type;
-		info.Volume = volume;
+		if (type == SfxType.Diffuse || mobj == mobj.World.DisplayPlayer.Mobj)
+		{
+			var player = new AudioStreamPlayer
+			{
+				Autoplay = true, VolumeDb = Linear2Db(_masterVolumeDecay), Stream = _buffers[(int)sfx], PitchScale = GetPitch(SfxType.Diffuse, sfx)
+			};
+
+			player.Finished += () =>
+			{
+				_soundPlayers.Remove(player);
+				player.Dispose();
+			};
+
+			var info = new AudioInfo { Source = mobj, Sound = sfx, Volume = volume };
+
+			_node.AddChild(player);
+			_soundPlayers.Add(player, info);
+
+			SetParam(player, info);
+		}
+		else
+		{
+			var player = new AudioStreamPlayer3D
+			{
+				Autoplay = true,
+				VolumeDb = Linear2Db(_masterVolumeDecay),
+				Stream = _buffers[(int)sfx],
+				PitchScale = GetPitch(SfxType.Diffuse, sfx),
+				AttenuationFilterCutoffHz = 41000,
+				UnitSize = 100,
+				MaxDistance = ClipDist
+			};
+
+			player.Finished += () =>
+			{
+				_soundPlayers.Remove(player);
+				player.Dispose();
+			};
+
+			var info = new AudioInfo { Source = mobj, Sound = sfx, Volume = volume };
+
+			_node.AddChild(player);
+			_soundPlayers.Add(player, info);
+
+			SetParam(player, info);
+		}
 	}
 
 	public void StopSound(Mobj mobj)
 	{
-		foreach (var info in _infos.Where(info => info.Source == mobj))
+		foreach (var info in _soundPlayers.Values.Where(info => info.Source == mobj))
 		{
-			if (info.Source == null)
-				continue;
-
-			info.LastX = info.Source.X;
-			info.LastY = info.Source.Y;
 			info.Source = null;
 			info.Volume /= 5;
 		}
@@ -303,72 +268,79 @@ public sealed class GodotSound : ISound, IDisposable
 	{
 		_random?.Clear();
 
-		for (var i = 0; i < _infos.Length; i++)
-		{
-			_channels[i].Stop();
-			_infos[i] = new ChannelInfo();
-		}
+		foreach (var player in _soundPlayers.Keys.ToArray())
+			player.Dispose();
 
-		_listener = null;
+		_soundPlayers.Clear();
 	}
 
 	public void Pause()
 	{
-		foreach (var channel in _channels)
-			channel.StreamPaused = true;
+		foreach (var node in _soundPlayers.Keys)
+		{
+			switch (node)
+			{
+				case AudioStreamPlayer player:
+				{
+					player.StreamPaused = true;
+
+					break;
+				}
+
+				case AudioStreamPlayer3D player:
+				{
+					player.StreamPaused = true;
+
+					break;
+				}
+			}
+		}
 	}
 
 	public void Resume()
 	{
-		foreach (var channel in _channels)
-			channel.StreamPaused = false;
-	}
-
-	private void SetParam(AudioStreamPlayer3D sound, ChannelInfo info)
-	{
-		if (info.Type == SfxType.Diffuse)
+		foreach (var node in _soundPlayers.Keys)
 		{
-			sound.Position = new Vector3(0, 0, -1);
-			sound.VolumeDb = Linear2Db(0.01F * _masterVolumeDecay * info.Volume);
-		}
-		else
-		{
-			Fixed sourceX;
-			Fixed sourceY;
-
-			if (info.Source == null)
+			switch (node)
 			{
-				sourceX = info.LastX;
-				sourceY = info.LastY;
-			}
-			else
-			{
-				sourceX = info.Source.X;
-				sourceY = info.Source.Y;
-			}
+				case AudioStreamPlayer player:
+				{
+					player.StreamPaused = false;
 
-			var x = (sourceX - (_listener?.X ?? Fixed.Zero)).ToFloat();
-			var y = (sourceY - (_listener?.Y ?? Fixed.Zero)).ToFloat();
+					break;
+				}
 
-			if (Math.Abs(x) < 16 && Math.Abs(y) < 16)
-			{
-				sound.Position = new Vector3(0, 0, -1);
-				sound.VolumeDb = Linear2Db(0.01F * _masterVolumeDecay * info.Volume);
-			}
-			else
-			{
-				var dist = MathF.Sqrt(x * x + y * y);
-				var angle = MathF.Atan2(y, x) - (float)(_listener?.Angle.ToRadian() ?? 0);
+				case AudioStreamPlayer3D player:
+				{
+					player.StreamPaused = false;
 
-				sound.Position = new Vector3(-MathF.Sin(angle), 0, -MathF.Cos(angle));
-				sound.VolumeDb = Linear2Db(0.01F * _masterVolumeDecay * GetDistanceDecay(dist) * info.Volume);
+					break;
+				}
 			}
 		}
 	}
 
-	private static float GetDistanceDecay(float dist)
+	private void SetParam(Node node, AudioInfo info)
 	{
-		return dist < CloseDist ? 1F : Math.Max((ClipDist - dist) / Attenuator, 0F);
+		switch (node)
+		{
+			case AudioStreamPlayer player:
+			{
+				player.VolumeDb = Linear2Db(0.01F * _masterVolumeDecay * info.Volume);
+
+				break;
+			}
+
+			case AudioStreamPlayer3D player:
+			{
+				player.VolumeDb = Linear2Db(0.01F * _masterVolumeDecay * info.Volume);
+
+				if (info.Source != null)
+					player.Position = new Vector3(info.Source.X.ToFloat(), info.Source.Z.ToFloat(), info.Source.Y.ToFloat());
+
+				break;
+			}
+		}
 	}
 
 	private float GetPitch(SfxType type, Sfx sfx)
@@ -392,11 +364,6 @@ public sealed class GodotSound : ISound, IDisposable
 
 	public void Dispose()
 	{
-		_uiChannel.Dispose();
-
-		foreach (var channel in _channels)
-			channel.Dispose();
-
 		foreach (var buffer in _buffers)
 			buffer?.Dispose();
 	}

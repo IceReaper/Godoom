@@ -29,6 +29,8 @@ public class GodotDoom : IDisposable
 	private readonly double _updateDelay;
 	private readonly double _renderDelay;
 
+	private readonly Camera3D _camera;
+
 	private double _updateAccumulator;
 	private double _renderAccumulator;
 
@@ -55,6 +57,8 @@ public class GodotDoom : IDisposable
 		window.Size = new Vector2I(_config.VideoScreenWidth, _config.VideoScreenHeight);
 		window.Mode = _config.VideoFullscreen ? Window.ModeEnum.Fullscreen : Window.ModeEnum.Windowed;
 		window.MoveToCenter();
+
+		node.AddChild(_camera = new Camera3D { Current = true });
 	}
 
 	public bool OnUpdate(double delta)
@@ -71,6 +75,12 @@ public class GodotDoom : IDisposable
 				if (Doom.Update() == UpdateResult.Completed)
 					return true;
 			}
+
+			var world = Doom.Game.World ?? Doom.Opening.DemoGame?.World;
+			var player = world?.DisplayPlayer.Mobj;
+
+			_camera.Position = new Vector3(player?.X.ToFloat() ?? 0, player?.Z.ToFloat() ?? 0, player?.Y.ToFloat() ?? 0);
+			_camera.RotationDegrees = new Vector3(0, (float)(player?.Angle.ToDegree() ?? 0) - 90, 0);
 
 			while (_renderAccumulator >= _renderDelay)
 			{
@@ -92,6 +102,8 @@ public class GodotDoom : IDisposable
 	public void Dispose()
 	{
 		GC.SuppressFinalize(this);
+
+		_camera.Dispose();
 
 		_music.Dispose();
 		_sound.Dispose();

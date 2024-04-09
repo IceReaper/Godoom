@@ -603,8 +603,6 @@ public static class SaveAndLoad
 			}
 
 			game.World.LevelTime = levelTime;
-
-			options.Sound.SetListener(game.World.ConsolePlayer.Mobj);
 		}
 
 		private void PadPointer()

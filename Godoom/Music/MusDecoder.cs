@@ -170,6 +170,7 @@ public class MusDecoder : IDecoder
 		switch (eventType)
 		{
 			case 0:
+			{
 				@event.Type = 0;
 				@event.Channel = channelNumber;
 
@@ -179,8 +180,10 @@ public class MusDecoder : IDecoder
 				@event.Data2 = 0;
 
 				break;
+			}
 
 			case 1:
+			{
 				@event.Type = 1;
 				@event.Channel = channelNumber;
 
@@ -199,8 +202,10 @@ public class MusDecoder : IDecoder
 				}
 
 				break;
+			}
 
 			case 2:
+			{
 				@event.Type = 2;
 				@event.Channel = channelNumber;
 
@@ -215,8 +220,10 @@ public class MusDecoder : IDecoder
 				@event.Data2 = pitchWheel2;
 
 				break;
+			}
 
 			case 3:
+			{
 				@event.Type = 3;
 				@event.Channel = channelNumber;
 
@@ -226,8 +233,10 @@ public class MusDecoder : IDecoder
 				@event.Data2 = 0;
 
 				break;
+			}
 
 			case 4:
+			{
 				@event.Type = 4;
 				@event.Channel = channelNumber;
 
@@ -238,9 +247,12 @@ public class MusDecoder : IDecoder
 				@event.Data2 = controllerValue;
 
 				break;
+			}
 
 			case 6:
+			{
 				return ReadResult.EndOfFile;
+			}
 		}
 
 		return last ? ReadResult.EndOfGroup : ReadResult.Ongoing;
@@ -255,86 +267,118 @@ public class MusDecoder : IDecoder
 			switch (@event.Type)
 			{
 				case 0:
+				{
 					synthesizer.NoteOff(@event.Channel, @event.Data1);
 
 					break;
+				}
 
 				case 1:
+				{
 					synthesizer.NoteOn(@event.Channel, @event.Data1, @event.Data2);
 
 					break;
+				}
 
 				case 2:
+				{
 					synthesizer.ProcessMidiMessage(@event.Channel, 0xE0, @event.Data1, @event.Data2);
 
 					break;
+				}
 
 				case 3:
+				{
 					switch (@event.Data1)
 					{
 						case 11:
+						{
 							synthesizer.NoteOffAll(@event.Channel, false);
 
 							break;
+						}
 
 						case 14:
+						{
 							synthesizer.ResetAllControllers(@event.Channel);
 
 							break;
+						}
 					}
 
 					break;
+				}
 
 				case 4:
+				{
 					switch (@event.Data1)
 					{
 						case 0:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xC0, @event.Data2, 0);
 
 							break;
+						}
 
 						case 1:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x00, @event.Data2);
 
 							break;
+						}
 
 						case 2:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x01, @event.Data2);
 
 							break;
+						}
 
 						case 3:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x07, @event.Data2);
 
 							break;
+						}
 
 						case 4:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x0A, @event.Data2);
 
 							break;
+						}
 
 						case 5:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x0B, @event.Data2);
 
 							break;
+						}
 
 						case 6:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x5B, @event.Data2);
 
 							break;
+						}
 
 						case 7:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x5D, @event.Data2);
 
 							break;
+						}
 
 						case 8:
+						{
 							synthesizer.ProcessMidiMessage(@event.Channel, 0xB0, 0x40, @event.Data2);
 
 							break;
+						}
 					}
 
 					break;
+				}
 			}
 		}
 	}

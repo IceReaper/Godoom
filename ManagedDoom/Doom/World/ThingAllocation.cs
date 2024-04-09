@@ -212,7 +212,6 @@ public sealed class ThingAllocation
 		if (mt.Type - 1 == world.Options.ConsolePlayer)
 		{
 			world.StatusBar.Reset();
-			world.Options.Sound.SetListener(mobj);
 		}
 
 		// Set color translations for player sprites.

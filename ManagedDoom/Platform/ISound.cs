@@ -14,7 +14,6 @@ namespace ManagedDoom.Platform;
 
 public interface ISound
 {
-	public void SetListener(Mobj listener);
 	public void Update();
 	public void StartSound(Sfx sfx);
 	public void StartSound(Mobj mobj, Sfx sfx, SfxType type);

@@ -53,14 +53,18 @@ public class GodotUserInput : IUserInput
 		switch (@event)
 		{
 			case InputEventKey { Pressed: true } keyEvent:
+			{
 				_doom.Doom.PostEvent(new DoomEvent(EventType.KeyDown, GodotToDoom(keyEvent.KeyLabel)));
 
 				break;
+			}
 
 			case InputEventKey { Pressed: false } keyEvent:
+			{
 				_doom.Doom.PostEvent(new DoomEvent(EventType.KeyUp, GodotToDoom(keyEvent.KeyLabel)));
 
 				break;
+			}
 
 			case InputEventMouseMotion mouseEvent when _mouseGrabbed:
 			{

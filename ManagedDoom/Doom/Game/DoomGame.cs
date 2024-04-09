@@ -292,7 +292,7 @@ public sealed class DoomGame
 
 		world = new World.World(content, options, this);
 
-		options.UserInput.Reset();
+		options.UserInput?.Reset();
 	}
 
 	private void DoNewGame()
