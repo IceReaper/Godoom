@@ -13,15 +13,12 @@ namespace ManagedDoom.Doom.Event;
 
 public sealed class DoomEvent
 {
-	private EventType type;
-	private DoomKey key;
+	public EventType Type { get; }
+	public DoomKey Key { get; }
 
 	public DoomEvent(EventType type, DoomKey key)
 	{
-		this.type = type;
-		this.key = key;
+		Type = type;
+		Key = key;
 	}
-
-	public EventType Type => type;
-	public DoomKey Key => key;
 }

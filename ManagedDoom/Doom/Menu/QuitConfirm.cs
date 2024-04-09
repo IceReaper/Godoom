@@ -57,7 +57,7 @@ public sealed class QuitConfirm : MenuDef
 
 	public override void Open()
 	{
-		IReadOnlyList<DoomString> list;
+		IReadOnlyList<string> list;
 		if (app.Options.GameMode == GameMode.Commercial)
 		{
 			if (app.Options.MissionPack == MissionPack.Doom2)

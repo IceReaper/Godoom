@@ -998,6 +998,7 @@ dotnet_diagnostic.CA1031.severity = none # Modify to catch a more specific allow
 dotnet_diagnostic.CA1062.severity = none # In externally visible method, validate parameter is non-null before using it
 dotnet_diagnostic.CA1063.severity = none # Provide an overridable implementation of Dispose(bool) or mark the type as sealed
 dotnet_diagnostic.CA1303.severity = none # Method passes a literal string as parameter of a call. Retrieve the following string(s) from a resource table instead
+dotnet_diagnostic.CA1308.severity = none # Normalize strings to uppercase
 dotnet_diagnostic.CA1716.severity = none # Identifiers should not match keywords
 dotnet_diagnostic.CA1724.severity = none # The type name conflicts in whole or in part with the namespace name
 dotnet_diagnostic.CA1819.severity = none # Properties should not return arrays

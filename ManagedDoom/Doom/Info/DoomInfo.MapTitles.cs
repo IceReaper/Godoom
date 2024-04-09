@@ -15,9 +15,9 @@ public static partial class DoomInfo
 {
 	public static class MapTitles
 	{
-		public static IReadOnlyList<IReadOnlyList<DoomString>> Doom = new DoomString[][]
+		public static IReadOnlyList<IReadOnlyList<string>> Doom = new string[][]
 		{
-			new DoomString[]
+			new string[]
 			{
 				Strings.HUSTR_E1M1,
 				Strings.HUSTR_E1M2,
@@ -30,7 +30,7 @@ public static partial class DoomInfo
 				Strings.HUSTR_E1M9
 			},
 
-			new DoomString[]
+			new string[]
 			{
 				Strings.HUSTR_E2M1,
 				Strings.HUSTR_E2M2,
@@ -43,7 +43,7 @@ public static partial class DoomInfo
 				Strings.HUSTR_E2M9
 			},
 
-			new DoomString[]
+			new string[]
 			{
 				Strings.HUSTR_E3M1,
 				Strings.HUSTR_E3M2,
@@ -56,7 +56,7 @@ public static partial class DoomInfo
 				Strings.HUSTR_E3M9
 			},
 
-			new DoomString[]
+			new string[]
 			{
 				Strings.HUSTR_E4M1,
 				Strings.HUSTR_E4M2,
@@ -70,7 +70,7 @@ public static partial class DoomInfo
 			}
 		};
 
-		public static IReadOnlyList<DoomString> Doom2 = new DoomString[]
+		public static IReadOnlyList<string> Doom2 = new string[]
 		{
 			Strings.HUSTR_1,
 			Strings.HUSTR_2,
@@ -106,7 +106,7 @@ public static partial class DoomInfo
 			Strings.HUSTR_32
 		};
 
-		public static IReadOnlyList<DoomString> Plutonia = new DoomString[]
+		public static IReadOnlyList<string> Plutonia = new string[]
 		{
 			Strings.PHUSTR_1,
 			Strings.PHUSTR_2,
@@ -142,7 +142,7 @@ public static partial class DoomInfo
 			Strings.PHUSTR_32
 		};
 
-		public static IReadOnlyList<DoomString> Tnt = new DoomString[]
+		public static IReadOnlyList<string> Tnt = new string[]
 		{
 			Strings.THUSTR_1,
 			Strings.THUSTR_2,

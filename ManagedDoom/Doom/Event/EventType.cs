@@ -13,6 +13,5 @@ public enum EventType
 {
 	KeyDown,
 	KeyUp,
-	Mouse,
-	Joystick
+	Mouse
 }
